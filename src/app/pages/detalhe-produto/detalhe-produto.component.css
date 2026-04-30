@@ -1,0 +1,255 @@
+.pagina-detalhes {
+  background-color: #ffffff;
+  padding: 3rem 0;
+}
+
+/* Breadcrumb */
+.trilha-navegacao {
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+.trilha-navegacao a {
+  color: #6c757d;
+  text-decoration: none;
+  margin: 0 0.5rem;
+}
+.trilha-navegacao a:first-child {
+  margin-left: 0;
+}
+.trilha-ativa {
+  color: var(--color-primary-red);
+  margin-left: 0.5rem;
+  font-weight: bold;
+}
+
+/* Grid Principal */
+.layout-info-produto {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+
+@media (max-width: 768px) {
+  .layout-info-produto {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Imagem */
+.area-imagem-produto {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+.area-imagem-produto img {
+  max-width: 100%;
+  max-height: 350px;
+  object-fit: contain;
+}
+
+/* Dados do Produto */
+.titulo-produto-destaque {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 0 0 0.5rem 0;
+  color: #212529;
+}
+.texto-referencia {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+.estrelas-avaliacao {
+  color: #ffc107;
+  margin-bottom: 1.5rem;
+}
+.estrelas-avaliacao span {
+  color: #6c757d;
+  font-size: 0.85rem;
+  margin-left: 0.5rem;
+}
+
+/* Preço */
+.area-preco {
+  margin-bottom: 2rem;
+}
+.preco-destaque {
+  color: var(--color-primary-red);
+  font-weight: bold;
+  font-size: 2.5rem;
+  margin: 0;
+}
+.preco-destaque span {
+  font-size: 1.5rem;
+}
+.texto-parcelamento {
+  color: #6c757d;
+  margin: 0;
+}
+
+/* Ações */
+.controle-quantidade {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  font-weight: bold;
+}
+.controle-quantidade input {
+  width: 80px;
+  padding: 0.5rem;
+  text-align: center;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+}
+
+.grupo-botoes-compra {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+.botao-escuro-grande,
+.botao-primario-grande {
+  flex: 1;
+  padding: 1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.botao-escuro-grande {
+  background-color: #212529;
+  color: white;
+}
+.botao-escuro-grande:hover {
+  background-color: #343a40;
+}
+.botao-primario-grande {
+  background-color: var(--color-primary-red);
+  color: white;
+}
+.botao-primario-grande:hover {
+  background-color: #c0392b;
+}
+
+@media (max-width: 576px) {
+  .grupo-botoes-compra {
+    flex-direction: column;
+  }
+}
+
+/* Frete */
+.caixa-frete {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+.caixa-frete h3 {
+  font-size: 1rem;
+  margin: 0 0 1rem 0;
+  color: #212529;
+}
+.caixa-frete h3 i {
+  color: var(--color-primary-red);
+}
+.input-frete {
+  display: flex;
+  margin-bottom: 0.5rem;
+}
+.input-frete input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px 0 0 4px;
+  outline: none;
+}
+.input-frete button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ced4da;
+  border-left: none;
+  background: white;
+  cursor: pointer;
+  border-radius: 0 4px 4px 0;
+}
+.sucesso-frete {
+  color: #28a745;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* Seção de Abas */
+.secao-especificacoes {
+  margin-top: 3rem;
+  padding-top: 3rem;
+  border-top: 1px solid #dee2e6;
+}
+.titulo-abas {
+  font-family: "Oswald", sans-serif;
+  font-size: 2rem;
+  margin: 0 0 1.5rem 0;
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 0.5rem;
+}
+
+.navegacao-abas {
+  display: flex;
+  gap: 1.5rem;
+  border-bottom: 1px solid #dee2e6;
+  margin-bottom: 1.5rem;
+}
+.botao-aba {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0 0 0.5rem 0;
+  font-size: 1rem;
+  color: #6c757d;
+  cursor: pointer;
+}
+.botao-aba:hover {
+  color: #212529;
+}
+.botao-aba.ativa {
+  color: #212529;
+  font-weight: bold;
+  border-bottom-color: var(--color-primary-red);
+}
+
+.conteudo-aba {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+.conteudo-aba p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.tabela-especificacoes {
+  width: 100%;
+  border-collapse: collapse;
+}
+.tabela-especificacoes th,
+.tabela-especificacoes td {
+  padding: 0.75rem;
+  text-align: left;
+  border-top: 1px solid #dee2e6;
+}
+.tabela-especificacoes th {
+  width: 30%;
+  color: #6c757d;
+  font-weight: normal;
+}
+.tabela-especificacoes tr:nth-child(odd) {
+  background-color: rgba(0, 0, 0, 0.02);
+}

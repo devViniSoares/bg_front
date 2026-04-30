@@ -1,0 +1,49 @@
+<header class="cabecalho-principal">
+  <div class="faixa-superior">
+    <div class="recipiente conteudo-superior">
+      <nav class="navegacao-topo">
+        <a routerLink="/">Home</a>
+        <a routerLink="/produtos">Produtos</a>
+        <a routerLink="/" fragment="quem-somos">Quem Somos</a>
+      </nav>
+      <div class="acoes-usuario">
+        <a routerLink="/carrinho" class="link-carrinho">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="bolha-carrinho" *ngIf="cartCount > 0">{{
+            cartCount
+          }}</span>
+        </a>
+        <a
+          href="#"
+          (click)="handleUserIconClick($event)"
+          class="icone-usuario"
+          [class.logado]="estaLogado()"
+        >
+          <i class="fas fa-user-circle"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="faixa-busca">
+    <div class="recipiente conteudo-busca">
+      <div class="area-logo">
+        <a routerLink="/">
+          <img src="assets/img/logobranco.png" alt="BIGODE" />
+        </a>
+      </div>
+      <div class="caixa-busca">
+        <input
+          type="text"
+          class="input-busca"
+          placeholder="Buscar peça..."
+          [(ngModel)]="termoBusca"
+          (keyup.enter)="executarBusca()"
+        />
+        <button class="botao-busca" type="button" (click)="executarBusca()">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>

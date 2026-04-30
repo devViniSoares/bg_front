@@ -1,0 +1,85 @@
+<main class="pagina-produtos">
+  <div class="recipiente">
+    <div class="cabecalho-produtos">
+      <h1 class="titulo-secao">TODOS OS PRODUTOS</h1>
+    </div>
+
+    <div class="layout-produtos">
+      <aside class="barra-lateral-filtros">
+        <h2 class="titulo-filtros">Filtros</h2>
+
+        <div class="grupo-filtro">
+          <h3 class="subtitulo-filtro">Categoria</h3>
+          <div class="lista-opcoes">
+            <label
+              class="item-check"
+              *ngFor="
+                let cat of [
+                  'Motor',
+                  'Freio',
+                  'Suspensão',
+                  'Iluminação',
+                  'Elétrica',
+                ]
+              "
+            >
+              <input
+                type="checkbox"
+                [checked]="categoriasSelecionadas[cat]"
+                (change)="alternarCategoria(cat, $event)"
+              />
+              {{ cat }}
+            </label>
+          </div>
+        </div>
+
+        <div class="grupo-filtro">
+          <h3 class="subtitulo-filtro">Preço (R$)</h3>
+          <input
+            type="range"
+            min="0"
+            max="5000"
+            [value]="filtroPreco"
+            (input)="atualizarPreco($event)"
+            class="barra-deslizante"
+          />
+          <p class="texto-preco">
+            Até:
+            <span class="destaque-vermelho"
+              >R$ {{ filtroPreco | number: "1.2-2" }}</span
+            >
+          </p>
+        </div>
+
+        <button class="botao-aplicar-filtros" (click)="aplicarFiltros()">
+          Aplicar Filtros
+        </button>
+      </aside>
+
+      <section class="area-listagem">
+        <div class="grade-produtos">
+          <div class="cartao-produto" *ngFor="let produto of produtosExibidos">
+            <a [routerLink]="['/produto', produto.id]" class="link-produto">
+              <div class="caixa-imagem-produto">
+                <img [src]="produto.img" [alt]="produto.name" />
+              </div>
+              <div class="corpo-produto">
+                <h3 class="titulo-produto">{{ produto.name }}</h3>
+                <p class="preco-produto">
+                  R$ {{ produto.price | number: "1.2-2" }}
+                </p>
+              </div>
+            </a>
+
+            <button
+              class="botao-comprar"
+              (click)="adicionarAoCarrinho($event, produto)"
+            >
+              Comprar
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>

@@ -1,0 +1,57 @@
+<div class="tela-autenticacao">
+  <!-- Botão Voltar -->
+  <div class="posicao-voltar">
+    <a routerLink="/" class="link-voltar"><i class="fas fa-arrow-left"></i></a>
+  </div>
+
+  <div class="recipiente conteudo-autenticacao">
+    <div class="coluna-central">
+      <div class="logotipo-central">
+        <img src="assets/img/logobranco.png" alt="BIGODE" />
+      </div>
+
+      <div class="cartao-autenticacao">
+        <h2 class="titulo-autenticacao">Login</h2>
+
+        <form (ngSubmit)="onSubmit()">
+          <div class="campo-formulario">
+            <label for="email">EMAIL</label>
+            <div class="caixa-input">
+              <span class="icone-input"><i class="fas fa-envelope"></i></span>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                [(ngModel)]="email"
+                placeholder="seu@email.com"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="campo-formulario">
+            <label for="senha">SENHA</label>
+            <div class="caixa-input">
+              <span class="icone-input"><i class="fas fa-lock"></i></span>
+              <input
+                type="password"
+                id="senha"
+                name="senha"
+                [(ngModel)]="senha"
+                placeholder="******"
+                required
+              />
+            </div>
+          </div>
+
+          <button type="submit" class="botao-primario-grande">ENTRAR</button>
+        </form>
+
+        <div class="rodape-cartao">
+          <span>Não tem conta?</span>
+          <a routerLink="/cadastro">Crie uma agora</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
