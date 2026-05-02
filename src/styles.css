@@ -1,0 +1,64 @@
+/* =========================================
+   1. VARIÁVEIS E RESET GLOBAL
+========================================= */
+:root {
+    --color-dark-bg: #212121;
+    --color-dark-header: #36393D; 
+    --color-primary-red: #E74C3C; 
+    --color-text-light: #FFFFFF;
+    --color-text-dark: #333333; 
+}
+
+* { 
+    box-sizing: border-box; 
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-dark-bg);
+    font-family: 'Roboto', sans-serif;
+    color: var(--color-text-dark);
+}
+
+/* Estrutura SPA para segurar o Footer no final */
+app-root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+app-footer { 
+    margin-top: auto; 
+}
+
+/* =========================================
+   2. CLASSES GLOBAIS DE ESTRUTURA
+========================================= */
+.recipiente {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Botões base que repetem no site todo */
+.botao-primario {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    text-align: center;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    background-color: var(--color-primary-red);
+    color: var(--color-text-light);
+    font-weight: bold;
+    transition: background 0.3s;
+    width: 100%;
+}
+
+.botao-primario:hover {
+    background-color: #c0392b;
+}

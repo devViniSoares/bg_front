@@ -1,0 +1,153 @@
+/* Container principal que ocupa a tela toda */
+.tela-autenticacao {
+    background-color: #212121;
+    background-image: radial-gradient(circle at center, #36393D 0%, #212121 100%);
+    min-height: 100vh;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-y: auto; 
+}
+
+.coluna-central-larga {
+    width: 100%;
+    max-width: 650px; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.logotipo-central {
+    margin-bottom: 2rem;
+}
+
+.logotipo-central img {
+    height: 80px;
+}
+
+.cartao-autenticacao {
+    background-color: rgba(54, 57, 61, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 2.5rem;
+    width: 100%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.titulo-autenticacao {
+    text-align: center;
+    color: #E74C3C; 
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+}
+
+/* Grade de Cadastro - O SEGREDO ESTÁ AQUI */
+.grade-formulario {
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+/* Ajuste para mobile */
+@media (max-width: 576px) {
+    .grade-formulario {
+        grid-template-columns: 1fr;
+    }
+}
+
+.campo-formulario label {
+    display: block;
+    color: #f8f9fa;
+    font-weight: bold;
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+}
+
+.caixa-input {
+    display: flex;
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: #fff;
+}
+
+.icone-input {
+    background-color: #fafafa;
+    color: #495057;
+    padding: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 45px;
+}
+
+.caixa-input input {
+    flex: 1;
+    border: none;
+    padding: 0.75rem;
+    font-size: 1rem;
+    outline: none;
+    color: #414141;
+}
+
+.botao-primario-grande {
+    width: 100%;
+    background-color: #E74C3C;
+    color: white;
+    border: none;
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+}
+
+.botao-primario-grande:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+}
+
+.rodape-cartao {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.rodape-cartao a {
+    color: #E74C3C;
+    font-weight: bold;
+    text-decoration: none;
+    margin-left: 0.5rem;
+}
+
+.posicao-voltar {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.link-voltar {
+    color: #fff;
+    font-size: 1.5rem;
+    text-decoration: none;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

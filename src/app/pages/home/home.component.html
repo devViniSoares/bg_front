@@ -1,0 +1,96 @@
+<main>
+  <section class="secao-categorias recipiente">
+    <div class="grade-categorias">
+      <div
+        class="cartao-categoria"
+        style="background-image: url(&quot;assets/img/motor.png&quot;)"
+      >
+        <div class="sobreposicao">
+          <h2>MOTOR</h2>
+          <a routerLink="/produtos" class="botao-primario botao-pequeno"
+            >Veja mais</a
+          >
+        </div>
+      </div>
+      <div
+        class="cartao-categoria"
+        style="background-image: url(&quot;assets/img/freio.png&quot;)"
+      >
+        <div class="sobreposicao">
+          <h2>FREIO</h2>
+          <a routerLink="/produtos" class="botao-primario botao-pequeno"
+            >Veja mais</a
+          >
+        </div>
+      </div>
+      <div
+        class="cartao-categoria"
+        style="background-image: url(&quot;assets/img/farol.png&quot;)"
+      >
+        <div class="sobreposicao">
+          <h2>ILUMINAÇÃO</h2>
+          <a routerLink="/produtos" class="botao-primario botao-pequeno"
+            >Veja mais</a
+          >
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="secao-produtos">
+    <div class="recipiente">
+      <h2 class="titulo-secao">Produtos em Destaque</h2>
+
+      <div class="grade-produtos">
+        <div class="cartao-produto" *ngFor="let produto of produtosEmDestaque">
+          <a [routerLink]="['/produto', produto.id]" class="link-produto">
+            <div class="caixa-imagem-produto">
+              <img [src]="produto.img" [alt]="produto.name" />
+            </div>
+            <h3 class="titulo-produto">{{ produto.name }}</h3>
+            <p class="preco">R$ {{ produto.price | number: "1.2-2" }}</p>
+          </a>
+          <button
+            class="botao-primario espaco-topo"
+            (click)="adicionarAoCarrinho($event, produto)"
+          >
+            Comprar
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="quem-somos" class="secao-quem-somos">
+    <div class="recipiente grade-quem-somos">
+      <div class="caixa-imagem-fachada">
+        <img src="assets/img/faixada.png" alt="Fachada da Loja" />
+      </div>
+      <div class="conteudo-texto-quem-somos">
+        <h2 class="titulo-secao-claro">Quem Somos</h2>
+        <p class="slogan-vermelho">Paixão por carros, excelência em peças.</p>
+
+        <div class="paragrafos-quem-somos">
+          <p>
+            Nós da <strong>BIGODE Autopeças</strong> nascemos da mesma paixão
+            que move você: a paixão por carros. Não somos apenas uma loja; somos
+            entusiastas que entendem o ronco do motor e a busca incessante por
+            performance.
+          </p>
+          <p>
+            Nossa missão é fornecer autopeças de alta qualidade — do motor à
+            suspensão — com a confiança e o conhecimento técnico que o seu
+            projeto exige. Acreditamos que cada carro merece o melhor, seja para
+            o dia a dia, para o <em>track day</em> ou para um projeto de
+            restauração.
+          </p>
+          <p>
+            Com a <strong>BIGODE</strong>, você não apenas compra peças, você
+            investe na performance e na história do seu veículo.
+          </p>
+          <p class="finalizacao">Seu carro em boas mãos começa aqui.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>

@@ -1,0 +1,124 @@
+<main class="pagina-detalhes" *ngIf="produto">
+  <div class="recipiente">
+    <nav class="trilha-navegacao">
+      <a routerLink="/">Home</a> > <a routerLink="/produtos">Produtos</a> >
+      <span class="trilha-ativa">{{ produto.name }}</span>
+    </nav>
+
+    <div class="layout-info-produto">
+      <div class="area-imagem-produto">
+        <img [src]="produto.img" [alt]="produto.name" />
+      </div>
+
+      <div class="area-dados-produto">
+        <h1 class="titulo-produto-destaque">{{ produto.name }}</h1>
+
+        <p class="texto-referencia">
+          Ref: <span>{{ produto.id }}</span> | Marca:
+          <strong>{{ produto.brand }}</strong>
+        </p>
+
+        <div class="estrelas-avaliacao">
+          <i class="fas fa-star"></i><i class="fas fa-star"></i
+          ><i class="fas fa-star"></i><i class="fas fa-star"></i
+          ><i class="fas fa-star-half-alt"></i>
+          <span>(120 Avaliações)</span>
+        </div>
+
+        <div class="area-preco">
+          <p class="preco-destaque">
+            <span>R$</span> {{ produto.price | number: "1.2-2" }}
+          </p>
+          <p class="texto-parcelamento">
+            Em até
+            <strong
+              >12x de R$ {{ produto.price / 12 | number: "1.2-2" }}</strong
+            >
+            sem juros.
+          </p>
+        </div>
+
+        <div class="controle-quantidade">
+          <label for="quantidade">Quantidade:</label>
+          <input
+            type="number"
+            id="quantidade"
+            [(ngModel)]="quantidade"
+            min="1"
+            max="10"
+          />
+        </div>
+
+        <div class="grupo-botoes-compra">
+          <button class="botao-escuro-grande" (click)="adicionarAoCarrinho()">
+            <i class="fas fa-shopping-cart"></i> ADICIONAR
+          </button>
+          <button class="botao-primario-grande" (click)="comprarAgora()">
+            COMPRAR AGORA
+          </button>
+        </div>
+
+        <div class="caixa-frete">
+          <h3><i class="fas fa-shipping-fast"></i> Calcule o Frete</h3>
+          <div class="input-frete">
+            <input type="text" placeholder="Digite seu CEP" />
+            <button>Calcular</button>
+          </div>
+          <p class="sucesso-frete">
+            <i class="fas fa-check-circle"></i> Entrega estimada: 5-7 dias
+            úteis.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <section class="secao-especificacoes">
+      <h2 class="titulo-abas">Descrição e Especificações</h2>
+
+      <div class="navegacao-abas">
+        <button
+          class="botao-aba"
+          [class.ativa]="abaAtiva === 'descricao'"
+          (click)="mudarAba('descricao')"
+        >
+          Descrição
+        </button>
+        <button
+          class="botao-aba"
+          [class.ativa]="abaAtiva === 'especificacoes'"
+          (click)="mudarAba('especificacoes')"
+        >
+          Especificações
+        </button>
+        <button
+          class="botao-aba"
+          [class.ativa]="abaAtiva === 'compatibilidade'"
+          (click)="mudarAba('compatibilidade')"
+        >
+          Compatibilidade
+        </button>
+      </div>
+
+      <div class="conteudo-aba">
+        <div *ngIf="abaAtiva === 'descricao'">
+          <p>{{ produto.description }}</p>
+        </div>
+
+        <div *ngIf="abaAtiva === 'especificacoes'">
+          <table class="tabela-especificacoes">
+            <tbody>
+              <tr *ngFor="let spec of produto.specs">
+                <th>{{ spec.label }}</th>
+                <td>{{ spec.value }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div *ngIf="abaAtiva === 'compatibilidade'">
+          <p>{{ produto.compatibility }}</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
