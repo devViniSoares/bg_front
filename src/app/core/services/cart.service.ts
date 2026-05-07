@@ -30,15 +30,13 @@ export class CartService {
   }
 
   adicionarAoCarrinho(produto: any, quantidade: number) {
-    console.log('Adicionando ao carrinho:', produto.name);
-
     const itensAtuais = this.itensNoCarrinho.value;
-    const itemExistente = itensAtuais.find((p) => p.id === produto.id);
+    const itemExistente = itensAtuais.find(p => p.id === produto.id);
 
     let novosItens;
     if (itemExistente) {
-      novosItens = itensAtuais.map((p) =>
-        p.id === produto.id ? { ...p, qty: p.qty + quantidade } : p,
+      novosItens = itensAtuais.map(p =>
+        p.id === produto.id ? { ...p, qty: p.qty + quantidade } : p
       );
     } else {
       novosItens = [...itensAtuais, { ...produto, qty: quantidade }];
@@ -46,12 +44,35 @@ export class CartService {
 
     this.itensNoCarrinho.next(novosItens);
     this.salvarNoStorage(novosItens);
+
+    if (isPlatformBrowser(this.platformId)) {
+      console.log(`Boa! ${produto.name} tá na grade do carrinho.`);
+      alert(`Boa! ${produto.name} foi adicionado. Bora fechar esse pedido?`);
+    }
   }
 
   removerItem(id: string) {
     const atualizados = this.itensNoCarrinho.value.filter((p) => p.id !== id);
     this.itensNoCarrinho.next(atualizados);
     this.salvarNoStorage(atualizados);
+  }
+
+  atualizarQuantidade(id: string, novaQuantidade: number) {
+    const itensAtuais = this.itensNoCarrinho.value;
+
+    const novosItens = itensAtuais.map(p =>
+      p.id === id ? { ...p, qty: novaQuantidade } : p
+    );
+
+    this.itensNoCarrinho.next(novosItens);
+    this.salvarNoStorage(novosItens);
+  }
+
+  limparCarrinho() {
+    this.itensNoCarrinho.next([]);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('carrinho_bigode'); 
+    }
   }
 
   private salvarNoStorage(itens: any[]) {

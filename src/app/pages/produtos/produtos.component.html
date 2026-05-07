@@ -11,23 +11,16 @@
         <div class="grupo-filtro">
           <h3 class="subtitulo-filtro">Categoria</h3>
           <div class="lista-opcoes">
-            <label
-              class="item-check"
-              *ngFor="
+            <label class="item-check" *ngFor="
                 let cat of [
                   'Motor',
                   'Freio',
                   'Suspensão',
-                  'Iluminação',
-                  'Elétrica',
+                  'Iluminação'
                 ]
-              "
-            >
-              <input
-                type="checkbox"
-                [checked]="categoriasSelecionadas[cat]"
-                (change)="alternarCategoria(cat, $event)"
-              />
+              ">
+              <input type="checkbox" [checked]="categoriasSelecionadas[cat]"
+                (change)="alternarCategoria(cat, $event)" />
               {{ cat }}
             </label>
           </div>
@@ -35,24 +28,20 @@
 
         <div class="grupo-filtro">
           <h3 class="subtitulo-filtro">Preço (R$)</h3>
-          <input
-            type="range"
-            min="0"
-            max="5000"
-            [value]="filtroPreco"
-            (input)="atualizarPreco($event)"
-            class="barra-deslizante"
-          />
+          <input type="range" min="0" max="5000" [value]="filtroPreco" (input)="atualizarPreco($event)"
+            class="barra-deslizante" />
           <p class="texto-preco">
             Até:
-            <span class="destaque-vermelho"
-              >R$ {{ filtroPreco | number: "1.2-2" }}</span
-            >
+            <span class="destaque-vermelho">R$ {{ filtroPreco | number: "1.2-2" }}</span>
           </p>
         </div>
 
         <button class="botao-aplicar-filtros" (click)="aplicarFiltros()">
           Aplicar Filtros
+        </button>
+
+        <button class="botao-aplicar-filtros" (click)="limparTudo()">
+          Limpar Tudo
         </button>
       </aside>
 
@@ -71,10 +60,7 @@
               </div>
             </a>
 
-            <button
-              class="botao-comprar"
-              (click)="adicionarAoCarrinho($event, produto)"
-            >
+            <button class="botao-comprar" (click)="adicionarAoCarrinho($event, produto)">
               Comprar
             </button>
           </div>
