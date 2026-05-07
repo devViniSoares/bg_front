@@ -68,6 +68,17 @@ export class ProdutosComponent implements OnInit {
     this.servicoCarrinho.adicionarAoCarrinho(produto, 1);
   }
 
+  limparTudo() {
+    this.filtroPreco = 5000;
+    Object.keys(this.categoriasSelecionadas).forEach(cat => {
+      this.categoriasSelecionadas[cat] = false;
+    });
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('ultimaBuscaBigode');
+    }
+    this.produtosExibidos = [...this.produtosOriginais];
+  }
+
   atualizarPreco(event: any) {
     this.filtroPreco = event.target.value;
   }

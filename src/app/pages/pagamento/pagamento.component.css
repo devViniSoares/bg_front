@@ -1,0 +1,149 @@
+.pagina-pagamento {
+    background-color: #E0E0E0;
+    padding: 3rem 0;
+    min-height: 80vh;
+}
+
+.titulo-secao {
+    font-family: 'Oswald', sans-serif;
+    border-bottom: 2px solid var(--color-primary-red);
+    display: inline-block;
+    margin-bottom: 2rem;
+}
+
+.layout-pagamento {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 2rem;
+    align-items: start;
+}
+
+@media (max-width: 992px) {
+    .layout-pagamento {
+        grid-template-columns: 1fr;
+    }
+}
+
+.cartao-metodo {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.subtitulo-pagamento {
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.campo-pagamento {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.5rem;
+}
+
+.campo-pagamento label {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.campo-pagamento input {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: all 0.3s;
+    outline: none;
+}
+
+.campo-pagamento input:focus {
+    border-color: #333;
+}
+
+.campo-pagamento input.ng-invalid.ng-touched {
+    border-color: var(--color-primary-red);
+    background-color: #fff8f8;
+}
+
+.campo-pagamento input.ng-valid.ng-touched {
+    border-color: #28a745;
+}
+
+.mensagem-erro {
+    color: var(--color-primary-red);
+    font-size: 0.8rem;
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+.grade-campos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.resumo-conclusao {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.titulo-resumo {
+    font-family: 'Oswald', sans-serif;
+    color: var(--color-primary-red);
+    margin-top: 0;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.linha-valor {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+    color: #555;
+}
+
+.divisor {
+    border: 0;
+    height: 1px;
+    background: #eee;
+    margin: 15px 0;
+}
+
+.linha-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    font-weight: bold;
+}
+
+.preco-final {
+    font-size: 1.5rem;
+    color: var(--color-primary-red);
+}
+
+.botao-finalizar-tudo {
+    width: 100%;
+    background: var(--color-primary-red);
+    color: white;
+    border: none;
+    padding: 1rem;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 1.1rem;
+}
+
+.botao-finalizar-tudo:hover {
+    background: #c0392b;
+}

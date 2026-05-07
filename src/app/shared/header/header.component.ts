@@ -38,10 +38,20 @@ export class HeaderComponent implements OnInit {
     return false;
   }
 
+  logout() {
+    if (isPlatformBrowser(this.platformId)) {
+      const confirmacao = confirm("Já vai, mestre? Quer mesmo sair da conta?");
+      if (confirmacao) {
+        localStorage.removeItem('usuarioSessao');
+        this.router.navigate(['/login']);
+      }
+    }
+  }
+
   handleUserIconClick(event: Event) {
     event.preventDefault();
     if (this.estaLogado()) {
-      alert('Você já acessou sua conta!');
+      this.logout();
     } else {
       this.router.navigate(['/login']);
     }
@@ -53,6 +63,13 @@ export class HeaderComponent implements OnInit {
         localStorage.setItem('ultimaBuscaBigode', this.termoBusca);
       }
       this.router.navigate(['/produtos']);
+    }
+  }
+
+  limparBuscaGlobal() {
+    this.termoBusca = '';
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('ultimaBuscaBigode'); 
     }
   }
 

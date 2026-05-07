@@ -1,12 +1,12 @@
 import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
-import { RouterLink, Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CartService } from '../../core/services/cart.service';
 
 @Component({
   selector: 'app-carrinho',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './carrinho.component.html',
   styleUrls: ['./carrinho.component.css']
 })
@@ -19,11 +19,10 @@ export class CarrinhoComponent implements OnInit {
   constructor(
     private servicoCarrinho: CartService, 
     private roteador: Router,
-    @Inject(PLATFORM_ID) private platformId: Object // Proteção SSR
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit() {
-    // Escuta as mudanças do serviço (que agora usa os nomes corrigidos)
     this.servicoCarrinho.cart$.subscribe(carrinho => {
       this.itensCarrinho = carrinho;
       this.calcularTotais();
@@ -36,14 +35,16 @@ export class CarrinhoComponent implements OnInit {
   }
 
   removerItem(id: string) {
-    this.servicoCarrinho.removerItem(id); // Nome corrigido para bater com o serviço
+    this.servicoCarrinho.removerItem(id);
   }
 
-  // Se você tiver um método de atualizar quantidade no serviço:
   alterarQuantidade(id: string, event: any) {
-    const qtd = parseInt(event.target.value);
-    // Caso tenha implementado o update no serviço, chame-o aqui
-    // this.servicoCarrinho.atualizarQuantidade(id, qtd);
+    const novaQuantidade = parseInt(event.target.value, 10);
+    if (novaQuantidade > 0) {
+      this.servicoCarrinho.atualizarQuantidade(id, novaQuantidade);
+    } else {
+      this.removerItem(id);
+    }
   }
 
   irParaPagamento() {

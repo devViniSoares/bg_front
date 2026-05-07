@@ -1,18 +1,23 @@
-import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import { inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { CanActivateFn, Router } from '@angular/router';
+export const authGuard: CanActivateFn = (route, state) => {
 
-@Injectable({
-  providedIn: 'root'
-})
-export class AuthGuard implements CanActivate {
-  constructor(private authService: AuthService, private router: Router) {}
+  const router = inject(Router);
+  const platformId = inject(PLATFORM_ID);
 
-  canActivate(): boolean {
-    if (this.authService.isLoggedIn()) {
+  if (isPlatformBrowser(platformId)) {
+    const usuario = localStorage.getItem('usuarioSessao');
+
+    if (usuario) {
       return true;
     }
-    this.router.navigate(['/login']);
+  }
+
+  if (isPlatformBrowser(platformId)) {
+    router.navigate(['/login']);
     return false;
   }
-}
+
+  return true;
+};

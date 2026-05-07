@@ -1,1 +1,65 @@
-<p>pagamento works!</p>
+<main class="pagina-pagamento">
+    <div class="recipiente">
+        <h1 class="titulo-secao">Finalizar Pedido</h1>
+
+        <form class="layout-pagamento" #formPagamento="ngForm" (ngSubmit)="finalizarPedido(formPagamento)">
+            
+            <section class="escolha-pagamento">
+                <div class="cartao-metodo">
+                    <h2 class="subtitulo-pagamento">
+                        <i class="fas fa-credit-card"></i> Pagamento via Cartão de Crédito
+                    </h2>
+                    
+                    <div class="detalhes-cartao">
+                        <div class="campo-pagamento">
+                            <label>Nome Impresso no Cartão</label>
+                            <input type="text" name="nome" [(ngModel)]="dadosCartao.nome" required #nome="ngModel" placeholder="Ex: JUNIOR F SILVA">
+                            <span class="mensagem-erro" *ngIf="nome.invalid && nome.touched">O nome é obrigatório.</span>
+                        </div>
+
+                        <div class="campo-pagamento">
+                            <label>Número do Cartão</label>
+                            <input type="text" name="numero" [(ngModel)]="dadosCartao.numero" required minlength="16" maxlength="16" pattern="^[0-9]*$" #numero="ngModel" placeholder="0000 0000 0000 0000">
+                            <span class="mensagem-erro" *ngIf="numero.invalid && numero.touched">Insira um número válido de 16 dígitos.</span>
+                        </div>
+                        
+                        <div class="grade-campos">
+                            <div class="campo-pagamento">
+                                <label>Validade</label>
+                                <input type="text" name="validade" [(ngModel)]="dadosCartao.validade" required pattern="^(0[1-9]|1[0-2])\/?([0-9]{2})$" #validade="ngModel" placeholder="MM/AA">
+                                <span class="mensagem-erro" *ngIf="validade.invalid && validade.touched">Use o formato MM/AA.</span>
+                            </div>
+                            
+                            <div class="campo-pagamento">
+                                <label>CVV</label>
+                                <input type="password" name="cvv" [(ngModel)]="dadosCartao.cvv" required minlength="3" maxlength="4" pattern="^[0-9]*$" #cvv="ngModel" placeholder="***">
+                                <span class="mensagem-erro" *ngIf="cvv.invalid && cvv.touched">CVV inválido.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <aside class="resumo-conclusao">
+                <h3 class="titulo-resumo">Resumo Final</h3>
+                <div class="linha-valor">
+                    <span>Produtos:</span>
+                    <span>R$ {{ totalProdutos | number:'1.2-2' }}</span>
+                </div>
+                <div class="linha-valor">
+                    <span>Frete:</span>
+                    <span>R$ {{ frete | number:'1.2-2' }}</span>
+                </div>
+                <hr class="divisor">
+                <div class="linha-total">
+                    <span>Total:</span>
+                    <span class="preco-final">R$ {{ (totalProdutos + frete) | number:'1.2-2' }}</span>
+                </div>
+
+                <button type="submit" class="botao-finalizar-tudo">
+                    CONCLUIR PEDIDO <i class="fas fa-check-circle"></i>
+                </button>
+            </aside>
+        </form>
+    </div>
+</main>
