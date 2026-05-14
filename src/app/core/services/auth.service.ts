@@ -1,64 +1,83 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
   getRegisteredUsers() {
-    if (typeof localStorage !== 'undefined') {
+    if (isPlatformBrowser(this.platformId)) {
       return JSON.parse(localStorage.getItem('users') || '[]');
     }
     return [];
   }
 
-  register(email: string, senha: string): boolean {
-    const users = this.getRegisteredUsers();
-    if (users.find((u: any) => u.email === email)) return false;
-    
-    users.push({ email, senha });
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('users', JSON.stringify(users));
-    }
-    return true;
-  }
-
-  login(email: string, senha: string): boolean {
-    const users = this.getRegisteredUsers();
-    const user = users.find((u: any) => u.email === email && u.senha === senha);
-    
-    if (user) {
-      if (typeof localStorage !== 'undefined') {
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('userName', email.split('@')[0]);
+    register(user: any): boolean {
+    if (isPlatformBrowser(this.platformId)) {
+      const users = this.getRegisteredUsers();
+      const userExists = users.find((u: any) => u.email === user.email);
+      if (userExists) {
+        return false; 
       }
+      users.push(user);
+      localStorage.setItem('users', JSON.stringify(users));
       return true;
     }
     return false;
   }
 
-  logout() {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.removeItem('isLoggedIn');
-      localStorage.removeItem('userName');
-      localStorage.removeItem('cart');
+  login(email: string, senha: string): boolean {
+    if (email === 'admin@bigode.com' && senha === 'admin123') {
+      if (isPlatformBrowser(this.platformId)) {
+        localStorage.setItem('usuarioSessao', 'ativo');
+        localStorage.setItem('emailUsuario', email);
+        localStorage.setItem('userName', 'Admin');
+      }
+      return true; 
     }
-    this.router.navigate(['/']);
+
+    const users = this.getRegisteredUsers();
+    const user = users.find((u: any) => u.email === email && u.senha === senha);
+    
+    if (user) {
+      if (isPlatformBrowser(this.platformId)) {
+        localStorage.setItem('usuarioSessao', 'ativo');
+        localStorage.setItem('emailUsuario', email);
+        localStorage.setItem('userName', user.nome || email.split('@')[0]);
+      }
+      return true; 
+    }
+
+    return false; 
   }
 
-  isLoggedIn(): boolean {
-    if (typeof localStorage !== 'undefined') {
-      return localStorage.getItem('isLoggedIn') === 'true';
+  estaLogado(): boolean {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('usuarioSessao') === 'ativo';
     }
     return false;
   }
 
   getUserName(): string {
-    if (typeof localStorage !== 'undefined') {
+    if (isPlatformBrowser(this.platformId)) {
       return localStorage.getItem('userName') || 'Cliente';
     }
     return 'Cliente';
+  }
+
+  logout() {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('usuarioSessao');
+      localStorage.removeItem('emailUsuario');
+      localStorage.removeItem('userName');
+      
+      this.router.navigate(['/login']);
+    }
   }
 }

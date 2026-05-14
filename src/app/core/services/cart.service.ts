@@ -1,14 +1,16 @@
 import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CartService {
   private itensNoCarrinho = new BehaviorSubject<any[]>([]);
+  private _notificacao = new Subject<string>();
 
   cart$ = this.itensNoCarrinho.asObservable();
+  notificacao$ = this._notificacao.asObservable();
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object) {
     this.carregarCarrinhoSalvo();
@@ -30,6 +32,11 @@ export class CartService {
   }
 
   adicionarAoCarrinho(produto: any, quantidade: number) {
+    if (isPlatformBrowser(this.platformId) && !localStorage.getItem('usuarioSessao')) {
+      this._notificacao.next('Faça login para adicionar produtos ao carrinho.');
+      return;
+    }
+
     const itensAtuais = this.itensNoCarrinho.value;
     const itemExistente = itensAtuais.find(p => p.id === produto.id);
 
@@ -45,10 +52,7 @@ export class CartService {
     this.itensNoCarrinho.next(novosItens);
     this.salvarNoStorage(novosItens);
 
-    if (isPlatformBrowser(this.platformId)) {
-      console.log(`Boa! ${produto.name} tá na grade do carrinho.`);
-      alert(`Boa! ${produto.name} foi adicionado. Bora fechar esse pedido?`);
-    }
+    this._notificacao.next(`${produto.name} adicionado ao carrinho!`);
   }
 
   removerItem(id: string) {

@@ -1,38 +1,44 @@
-import { Component, PLATFORM_ID, Inject } from '@angular/core';
-import { isPlatformBrowser, CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service'; // Chame o porteiro
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
   email: string = '';
   senha: string = '';
 
   constructor(
-    private router: Router,
-    @Inject(PLATFORM_ID) private platformId: Object,
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   onSubmit() {
-    if (this.email && this.senha) {
-      if (isPlatformBrowser(this.platformId)) {
-        const dadosUsuario = {
-          email: this.email,
-          nome: 'Vinícius',
-          timestamp: new Date().getTime(),
-        };
-        localStorage.setItem('usuarioSessao', JSON.stringify(dadosUsuario));
+    if (!this.email || !this.senha) {
+      alert('Por favor, preencha todos os campos.');
+      return;
+    }
+
+    const loginValidado = this.authService.login(this.email, this.senha);
+
+    if (loginValidado) {
+      
+      if (this.email === 'admin@bigode.com') {
+        this.router.navigate(['/admin']);
+      } else {
+        alert(`Bem-vindo de volta, ${this.authService.getUserName()}!`);
+        this.router.navigate(['/']);
       }
 
-      this.router.navigate(['/']);
     } else {
-      alert('Preencha os campos corretamente.');
+      alert('E-mail ou senha incorretos! Tente novamente.');
     }
   }
 }

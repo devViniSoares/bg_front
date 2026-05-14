@@ -25,10 +25,6 @@ export class HeaderComponent implements OnInit {
     this.servicoCarrinho.cart$.subscribe((itens) => {
       this.cartCount = itens.reduce((total, item) => total + item.qty, 0);
     });
-
-    if (isPlatformBrowser(this.platformId)) {
-      this.carregarBuscaSalva();
-    }
   }
 
   estaLogado(): boolean {
@@ -59,26 +55,12 @@ export class HeaderComponent implements OnInit {
 
   executarBusca() {
     if (this.termoBusca.trim()) {
-      if (isPlatformBrowser(this.platformId)) {
-        localStorage.setItem('ultimaBuscaBigode', this.termoBusca);
-      }
-      this.router.navigate(['/produtos']);
+      this.router.navigate(['/produtos'], { queryParams: { busca: this.termoBusca } });
     }
   }
 
   limparBuscaGlobal() {
     this.termoBusca = '';
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem('ultimaBuscaBigode'); 
-    }
-  }
-
-  carregarBuscaSalva() {
-    if (isPlatformBrowser(this.platformId)) {
-      const salvo = localStorage.getItem('ultimaBuscaBigode');
-      if (salvo) {
-        this.termoBusca = salvo;
-      }
-    }
+    this.router.navigate(['/produtos']);
   }
 }

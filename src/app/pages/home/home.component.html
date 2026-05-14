@@ -7,7 +7,7 @@
       >
         <div class="sobreposicao">
           <h2>MOTOR</h2>
-          <a routerLink="/produtos" class="botao-primario botao-pequeno"
+          <a [routerLink]="['/produtos']" [queryParams]="{categoria: 'Motor'}" class="botao-primario botao-pequeno"
             >Veja mais</a
           >
         </div>
@@ -18,7 +18,7 @@
       >
         <div class="sobreposicao">
           <h2>FREIO</h2>
-          <a routerLink="/produtos" class="botao-primario botao-pequeno"
+          <a [routerLink]="['/produtos']" [queryParams]="{categoria: 'Freio'}" class="botao-primario botao-pequeno"
             >Veja mais</a
           >
         </div>
@@ -29,7 +29,7 @@
       >
         <div class="sobreposicao">
           <h2>ILUMINAÇÃO</h2>
-          <a routerLink="/produtos" class="botao-primario botao-pequeno"
+          <a [routerLink]="['/produtos']" [queryParams]="{categoria: 'Iluminação'}" class="botao-primario botao-pequeno"
             >Veja mais</a
           >
         </div>
