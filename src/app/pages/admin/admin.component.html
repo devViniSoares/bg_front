@@ -1,0 +1,247 @@
+<div class="layout-admin">
+  <aside class="barra-lateral">
+    <div class="perfil-admin">
+      <i class="fas fa-user-circle icone-perfil"></i>
+      <span>UsuarioADM</span>
+    </div>
+
+    <nav class="menu-admin">
+      <button
+        class="item-menu"
+        [class.ativo]="menuAtivo === 'financas'"
+        (click)="menuAtivo = 'financas'"
+      >
+        <i class="fas fa-chart-bar"></i> Finanças
+      </button>
+      <button
+        class="item-menu"
+        [class.ativo]="menuAtivo === 'criar'"
+        (click)="menuAtivo = 'criar'"
+      >
+        <i class="fas fa-clipboard-check"></i> Criar produtos
+      </button>
+      <button
+        class="item-menu"
+        [class.ativo]="menuAtivo === 'relatorio'"
+        (click)="menuAtivo = 'relatorio'"
+      >
+        <i class="fas fa-chart-line"></i> Relatório
+      </button>
+    </nav>
+
+    <div class="rodape-sidebar">
+      <button class="botao-sair" (click)="sairDoAdmin()">
+        <i class="fas fa-sign-out-alt"></i> Sair
+      </button>
+    </div>
+  </aside>
+
+  <main class="conteudo-principal">
+    <section class="tela-admin" *ngIf="menuAtivo === 'financas'">
+      <h1 class="titulo-admin">FINANÇAS</h1>
+
+      <div class="grade-cards-financeiros">
+        <div class="card-financeiro card-lucro">
+          <div class="info-card">
+            <h2>LUCROS</h2>
+            <p>$364.32M</p>
+          </div>
+          <i class="fas fa-wallet"></i>
+        </div>
+
+        <div class="card-financeiro card-ganhos">
+          <div class="info-card">
+            <h2>GANHOS</h2>
+            <p>+$779.77M</p>
+          </div>
+          <i class="fas fa-arrow-up"></i>
+        </div>
+
+        <div class="card-financeiro card-despesas">
+          <div class="info-card">
+            <h2>DESPESAS</h2>
+            <p>-$415.45M</p>
+          </div>
+          <i class="fas fa-arrow-down"></i>
+        </div>
+      </div>
+    </section>
+    <section class="tela-admin" *ngIf="menuAtivo === 'criar'">
+      <h1 class="titulo-admin">NOVO PRODUTO</h1>
+
+      <section class="tela-admin" *ngIf="menuAtivo === 'criar'">
+        <h1 class="titulo-admin">
+          {{ modoEdicao ? "EDITAR PRODUTO" : "NOVO PRODUTO" }}
+        </h1>
+
+        <form class="formulario-produto">
+          <div class="area-imagem">
+            <label>Imagem do produto:</label>
+            <input
+              type="file"
+              #fileInput
+              (change)="aoSelecionarImagem($event)"
+              accept="image/*"
+              style="display: none"
+            />
+            <div class="upload-box" (click)="fileInput.click()">
+              <i class="fas fa-plus" *ngIf="!imagemPreview"></i>
+              <img
+                [src]="imagemPreview"
+                *ngIf="imagemPreview"
+                class="imagem-preview"
+              />
+            </div>
+          </div>
+
+          <div class="area-campos">
+            <div class="campo-linha-curta">
+              <label>Estoque:</label>
+              <input
+                type="number"
+                name="estoque"
+                [(ngModel)]="produtoForm.estoque"
+                class="input-cinza input-curto"
+              />
+            </div>
+            <div class="campo-linha">
+              <label>Nome:</label>
+              <input
+                type="text"
+                name="nome"
+                [(ngModel)]="produtoForm.nome"
+                class="input-cinza"
+              />
+            </div>
+            <div class="campo-linha">
+              <label>Fabricante:</label>
+              <input
+                type="text"
+                name="fabricante"
+                [(ngModel)]="produtoForm.fabricante"
+                class="input-cinza"
+              />
+            </div>
+            <div class="campo-linha">
+              <label>Preço:</label>
+              <input
+                type="text"
+                name="preco"
+                [(ngModel)]="produtoForm.preco"
+                class="input-cinza"
+              />
+            </div>
+            <div class="campo-linha">
+              <label>Código:</label>
+              <input
+                type="text"
+                name="codigo"
+                [(ngModel)]="produtoForm.codigo"
+                class="input-cinza"
+              />
+            </div>
+          </div>
+
+          <div class="area-descricao">
+            <label>Descrição:</label>
+            <textarea
+              name="descricao"
+              [(ngModel)]="produtoForm.descricao"
+              class="input-cinza textarea-desc"
+            ></textarea>
+          </div>
+
+          <div class="area-botao-submit">
+            <button
+              type="button"
+              class="botao-cancelar"
+              *ngIf="modoEdicao"
+              (click)="cancelarEdicao()"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              class="botao-cadastrar-produto"
+              (click)="salvarProduto()"
+            >
+              {{ modoEdicao ? "Salvar Alterações" : "Cadastrar" }}
+            </button>
+          </div>
+        </form>
+      </section>
+    </section>
+    <section class="tela-admin" *ngIf="menuAtivo === 'relatorio'">
+      <div class="cabecalho-relatorio">
+        <h1 class="titulo-admin sem-margem">RELATÓRIO</h1>
+        <div class="abas-relatorio">
+          <button
+            [class.ativo]="subAbaRelatorio === 'vendas'"
+            (click)="subAbaRelatorio = 'vendas'"
+          >
+            Vendas Concluídas
+          </button>
+          <button
+            [class.ativo]="subAbaRelatorio === 'estoque'"
+            (click)="subAbaRelatorio = 'estoque'"
+          >
+            Estoque
+          </button>
+        </div>
+      </div>
+      <div class="tabela-container" *ngIf="subAbaRelatorio === 'vendas'">
+        <table class="tabela-admin">
+          <thead>
+            <tr>
+              <th>nome</th>
+              <th>modelo</th>
+              <th>categoria</th>
+              <th>preço</th>
+              <th>status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Vinicius Soares Inocencio</td>
+              <td>Pastilha de Freio Alta performace</td>
+              <td>Freio</td>
+              <td>R$ 450,90</td>
+              <td class="status-entregue"><strong>Entregue</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tabela-container" *ngIf="subAbaRelatorio === 'estoque'">
+        <table class="tabela-admin">
+          <thead>
+            <tr>
+              <th>modelo</th>
+              <th>categoria</th>
+              <th>preço</th>
+              <th>estoque</th>
+              <th>ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Loop que cria a tabela -->
+            <tr *ngFor="let item of estoqueMock">
+              <td>{{ item.nome }}</td>
+              <td>{{ item.categoria }}</td>
+              <td>R$ {{ item.preco }}</td>
+              <td>{{ item.estoque }}</td>
+              <td class="acoes-tabela">
+                <button class="btn-icone erro">
+                  <i class="fas fa-trash"></i>
+                </button>
+                <!-- O Clique passa o item inteiro pra função -->
+                <button class="btn-icone" (click)="editarProduto(item)">
+                  <i class="fas fa-pen"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>

@@ -41,10 +41,18 @@ export class DetalheProdutoComponent implements OnInit {
   }
 
   adicionarAoCarrinho() {
+    if (isPlatformBrowser(this.platformId) && !localStorage.getItem('usuarioSessao')) {
+      this.roteador.navigate(['/login']);
+      return;
+    }
     this.servicoCarrinho.adicionarAoCarrinho(this.produto, this.quantidade);
   }
 
   comprarAgora() {
+    if (isPlatformBrowser(this.platformId) && !localStorage.getItem('usuarioSessao')) {
+      this.roteador.navigate(['/login']);
+      return;
+    }
     this.adicionarAoCarrinho();
     this.roteador.navigate(['/carrinho']);
   }

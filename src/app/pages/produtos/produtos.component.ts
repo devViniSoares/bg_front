@@ -1,6 +1,6 @@
 import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
 import { isPlatformBrowser, CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../core/services/product.service';
 import { CartService } from '../../core/services/cart.service';
 
@@ -20,28 +20,33 @@ export class ProdutosComponent implements OnInit {
     Freio: false,
     Suspensão: false,
     Iluminação: false,
-    Elétrica: false,
   };
 
   constructor(
     private servicoProduto: ProductService,
     private servicoCarrinho: CartService,
+    private route: ActivatedRoute,
     @Inject(PLATFORM_ID) private platformId: Object,
   ) {}
 
   ngOnInit() {
     this.produtosOriginais = this.servicoProduto.getProducts();
 
-    if (isPlatformBrowser(this.platformId)) {
-      const buscaSalva = localStorage.getItem('ultimaBuscaBigode');
-      if (buscaSalva) {
-        this.filtrarPorTexto(buscaSalva);
-      } else {
-        this.produtosExibidos = [...this.produtosOriginais];
-      }
-    } else {
+    this.route.queryParams.subscribe(params => {
       this.produtosExibidos = [...this.produtosOriginais];
-    }
+      this.filtroPreco = 5000;
+      Object.keys(this.categoriasSelecionadas).forEach(cat => this.categoriasSelecionadas[cat] = false);
+
+      if (params['busca']) {
+        this.filtrarPorTexto(params['busca']);
+      } else if (params['categoria']) {
+        const cat = params['categoria'];
+        if (this.categoriasSelecionadas.hasOwnProperty(cat)) {
+          this.categoriasSelecionadas[cat] = true;
+        }
+        this.aplicarFiltros();
+      }
+    });
   }
 
   filtrarPorTexto(termo: string) {
@@ -73,9 +78,6 @@ export class ProdutosComponent implements OnInit {
     Object.keys(this.categoriasSelecionadas).forEach(cat => {
       this.categoriasSelecionadas[cat] = false;
     });
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem('ultimaBuscaBigode');
-    }
     this.produtosExibidos = [...this.produtosOriginais];
   }
 
