@@ -1,68 +1,111 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
+import { ProdutoService, Produto } from '../../core/services/produto.service';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule], 
+  imports: [CommonModule, FormsModule],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css']
 })
-export class AdminComponent {
-  constructor(private authService: AuthService) {}
-  menuAtivo: string = 'relatorio'; 
+export class AdminComponent implements OnInit {
+  constructor(
+    private authService: AuthService,
+    private produtoService: ProdutoService
+  ) {}
+
+  menuAtivo: string = 'relatorio';
   subAbaRelatorio: string = 'estoque';
-
-  // Controle de tela
   modoEdicao: boolean = false;
+  produtos: Produto[] = [];
 
-  imagemPreview: string | null = null;
+  categorias = ['Motor', 'Freio', 'Iluminação', 'Suspensão'];
 
   produtoForm: any = {
-    nome: '', fabricante: '', preco: '', codigo: '', estoque: '', descricao: ''
+    nome: '', fabricante: '', preco: '', codigo: '', estoque: '', descricao: '', categoria: '', imagemUrl: ''
   };
 
-  aoSelecionarImagem(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (e) => this.imagemPreview = e.target?.result as string;
-      reader.readAsDataURL(input.files[0]);
-    }
+  ngOnInit() {
+    this.carregarProdutos();
   }
 
-  estoqueMock = [
-    { id: 1, nome: 'Farol LED Projetor Tuning XENON', categoria: 'Iluminação', fabricante: 'XenonTech', preco: '1250.00', estoque: 45, codigo: 'ILU-001', descricao: 'Farol top de linha.' },
-    { id: 2, nome: 'Pastilha de Freio Alta performace', categoria: 'Freio', fabricante: 'Brembo', preco: '450.90', estoque: 23, codigo: 'FRE-002', descricao: 'Pastilha de cerâmica.' }
-  ];
-
+  carregarProdutos() {
+    this.produtoService.getProdutos().subscribe({
+      next: (lista) => this.produtos = lista,
+      error: () => alert('Erro ao carregar produtos.')
+    });
+  }
 
   editarProduto(produto: any) {
     this.modoEdicao = true;
-    this.produtoForm = { ...produto }; 
-    this.menuAtivo = 'criar'; 
+    this.produtoForm = {
+      id: produto.id,
+      nome: produto.nome,
+      fabricante: produto.marca ?? '',
+      preco: produto.preco,
+      codigo: '',
+      estoque: produto.estoque,
+      descricao: produto.descricao,
+      categoria: produto.categoria ?? '',
+      imagemUrl: produto.imagemUrl ?? ''
+    };
+    this.menuAtivo = 'criar';
   }
 
   limparFormulario() {
     this.modoEdicao = false;
-    this.produtoForm = { nome: '', fabricante: '', preco: '', codigo: '', estoque: '', descricao: '' };
+    this.produtoForm = { nome: '', fabricante: '', preco: '', codigo: '', estoque: '', descricao: '', categoria: '', imagemUrl: '' };
   }
 
   cancelarEdicao() {
     this.limparFormulario();
-    this.menuAtivo = 'relatorio'; 
+    this.menuAtivo = 'relatorio';
   }
 
   salvarProduto() {
-    if (this.modoEdicao) {
-      alert('Boa! Alterações salvas com sucesso.');
+    const payload: Produto = {
+      nome: this.produtoForm.nome,
+      marca: this.produtoForm.fabricante,
+      preco: parseFloat(this.produtoForm.preco),
+      estoque: parseInt(this.produtoForm.estoque, 10),
+      descricao: this.produtoForm.descricao,
+      categoria: this.produtoForm.categoria,
+      modelo: '',
+      imagemUrl: this.produtoForm.imagemUrl
+    };
+
+    if (this.modoEdicao && this.produtoForm.id) {
+      this.produtoService.atualizarProduto(this.produtoForm.id, payload).subscribe({
+        next: () => {
+          alert('Alterações salvas com sucesso.');
+          this.limparFormulario();
+          this.menuAtivo = 'relatorio';
+          this.carregarProdutos();
+        },
+        error: () => alert('Erro ao salvar alterações.')
+      });
     } else {
-      alert('Show! Novo produto cadastrado.');
+      this.produtoService.criarProduto(payload).subscribe({
+        next: () => {
+          alert('Novo produto cadastrado.');
+          this.limparFormulario();
+          this.menuAtivo = 'relatorio';
+          this.carregarProdutos();
+        },
+        error: () => alert('Erro ao cadastrar produto.')
+      });
     }
-    this.limparFormulario();
-    this.menuAtivo = 'relatorio';
+  }
+
+  excluirProduto(id: number) {
+    if (!confirm('Tem certeza que deseja excluir este produto?')) return;
+    this.produtoService.excluirProduto(id).subscribe({
+      next: () => this.carregarProdutos(),
+      error: () => alert('Erro ao excluir produto.')
+    });
   }
 
   sairDoAdmin() {

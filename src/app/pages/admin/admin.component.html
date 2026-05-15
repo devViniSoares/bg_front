@@ -76,27 +76,24 @@
 
         <form class="formulario-produto">
           <div class="area-imagem">
-            <label>Imagem do produto:</label>
+            <label>URL da imagem: <span style="color:#e74c3c">*</span></label>
             <input
-              type="file"
-              #fileInput
-              (change)="aoSelecionarImagem($event)"
-              accept="image/*"
-              style="display: none"
+              type="text"
+              name="imagemUrl"
+              [(ngModel)]="produtoForm.imagemUrl"
+              class="input-cinza"
+              placeholder="https://..."
             />
-            <div class="upload-box" (click)="fileInput.click()">
-              <i class="fas fa-plus" *ngIf="!imagemPreview"></i>
-              <img
-                [src]="imagemPreview"
-                *ngIf="imagemPreview"
-                class="imagem-preview"
-              />
-            </div>
+            <img
+              *ngIf="produtoForm.imagemUrl"
+              [src]="produtoForm.imagemUrl"
+              class="imagem-preview"
+            />
           </div>
 
           <div class="area-campos">
             <div class="campo-linha-curta">
-              <label>Estoque:</label>
+              <label>Estoque: <span style="color:#e74c3c">*</span></label>
               <input
                 type="number"
                 name="estoque"
@@ -105,7 +102,7 @@
               />
             </div>
             <div class="campo-linha">
-              <label>Nome:</label>
+              <label>Nome: <span style="color:#e74c3c">*</span></label>
               <input
                 type="text"
                 name="nome"
@@ -114,7 +111,7 @@
               />
             </div>
             <div class="campo-linha">
-              <label>Fabricante:</label>
+              <label>Fabricante: <span style="color:#e74c3c">*</span></label>
               <input
                 type="text"
                 name="fabricante"
@@ -123,13 +120,20 @@
               />
             </div>
             <div class="campo-linha">
-              <label>Preço:</label>
-              <input
-                type="text"
-                name="preco"
-                [(ngModel)]="produtoForm.preco"
-                class="input-cinza"
-              />
+              <label>Preço: <span style="color:#e74c3c">*</span></label>
+              <div style="display:flex;align-items:center;gap:0.4rem">
+                <span style="font-weight:600;color:#555">R$</span>
+                <input
+                  type="number"
+                  name="preco"
+                  [(ngModel)]="produtoForm.preco"
+                  class="input-cinza"
+                  step="0.01"
+                  min="0"
+                  placeholder="0,00"
+                  style="flex:1"
+                />
+              </div>
             </div>
             <div class="campo-linha">
               <label>Código:</label>
@@ -140,10 +144,17 @@
                 class="input-cinza"
               />
             </div>
+            <div class="campo-linha">
+              <label>Categoria: <span style="color:#e74c3c">*</span></label>
+              <select name="categoria" [(ngModel)]="produtoForm.categoria" class="input-cinza">
+                <option value="">Selecione...</option>
+                <option *ngFor="let cat of categorias" [value]="cat">{{ cat }}</option>
+              </select>
+            </div>
           </div>
 
           <div class="area-descricao">
-            <label>Descrição:</label>
+            <label>Descrição: <span style="color:#e74c3c">*</span></label>
             <textarea
               name="descricao"
               [(ngModel)]="produtoForm.descricao"
@@ -224,13 +235,13 @@
           </thead>
           <tbody>
             <!-- Loop que cria a tabela -->
-            <tr *ngFor="let item of estoqueMock">
+            <tr *ngFor="let item of produtos">
               <td>{{ item.nome }}</td>
               <td>{{ item.categoria }}</td>
-              <td>R$ {{ item.preco }}</td>
+              <td>{{ item.preco | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
               <td>{{ item.estoque }}</td>
               <td class="acoes-tabela">
-                <button class="btn-icone erro">
+                <button class="btn-icone erro" (click)="excluirProduto(item.id!)">
                   <i class="fas fa-trash"></i>
                 </button>
                 <!-- O Clique passa o item inteiro pra função -->

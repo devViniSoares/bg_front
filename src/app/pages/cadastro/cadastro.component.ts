@@ -1,53 +1,66 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-cadastro',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './cadastro.component.html',
   styleUrls: ['./cadastro.component.css']
 })
 export class CadastroComponent {
-  nome: string = '';
-  email: string = '';
-  senha: string = '';
-  confirmarSenha: string = '';
-  celular: string = '';
-  cpf: string = '';
+  nome = '';
+  email = '';
+  senha = '';
+  loading = false;
+  erro = '';
+  sucesso = '';
 
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  constructor(private authService: AuthService, private router: Router, private cdr: ChangeDetectorRef) {}
 
   onSubmit() {
-    if (!this.email || !this.senha) {
-      alert('Por favor, preencha pelo menos o e-mail e a senha.');
+    this.erro = '';
+    this.sucesso = '';
+
+    if (!this.nome || !this.email || !this.senha) {
+      this.erro = 'Por favor, preencha todos os campos.';
       return;
     }
 
-    if (this.confirmarSenha && this.senha !== this.confirmarSenha) {
-      alert('As senhas não coincidem! Verifique e tente novamente.');
+    const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(this.email);
+    if (!emailValido) {
+      this.erro = 'Informe um e-mail válido (ex: nome@dominio.com).';
       return;
     }
 
-    const novoUsuario = {
-      nome: this.nome,
-      email: this.email,
-      senha: this.senha
-    };
-
-    const cadastroAprovado = this.authService.register(novoUsuario);
-
-    if (cadastroAprovado) {
-      alert('Cadastro realizado com sucesso! Agora é só fazer o login.');
-      this.router.navigate(['/login']); 
-    } else {
-      alert('Opa! Esse e-mail já está cadastrado. Tente fazer o login ou use outro e-mail.');
+    if (this.senha.length < 6) {
+      this.erro = 'A senha deve ter no mínimo 6 caracteres.';
+      return;
     }
+
+    this.loading = true;
+
+    this.authService.cadastro({ nome: this.nome, email: this.email, senha: this.senha }).subscribe({
+      next: () => {
+        this.sucesso = 'Cadastro realizado com sucesso! Redirecionando para o login...';
+        this.loading = false;
+        this.cdr.detectChanges();
+        setTimeout(() => this.router.navigate(['/login']), 3000);
+      },
+      error: (err: HttpErrorResponse) => {
+        if (err.status === 409) {
+          this.erro = 'Este e-mail já está cadastrado.';
+        } else if (err.status === 400) {
+          this.erro = 'Verifique os dados: e-mail válido e senha com no mínimo 6 caracteres.';
+        } else {
+          this.erro = 'Não foi possível realizar o cadastro. Tente novamente.';
+        }
+        this.loading = false;
+      }
+    });
   }
 }
