@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../core/services/auth.service'; // Chame o porteiro
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -14,31 +14,32 @@ import { AuthService } from '../../core/services/auth.service'; // Chame o porte
 export class LoginComponent {
   email: string = '';
   senha: string = '';
+  loading: boolean = false;
+  erro: string = '';
 
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit() {
     if (!this.email || !this.senha) {
-      alert('Por favor, preencha todos os campos.');
+      this.erro = 'Preencha os campos corretamente.';
       return;
     }
 
-    const loginValidado = this.authService.login(this.email, this.senha);
+    this.loading = true;
+    this.erro = '';
 
-    if (loginValidado) {
-      
-      if (this.email === 'admin@bigode.com') {
-        this.router.navigate(['/admin']);
-      } else {
-        alert(`Bem-vindo de volta, ${this.authService.getUserName()}!`);
-        this.router.navigate(['/']);
+    this.authService.login(this.email, this.senha).subscribe({
+      next: (response) => {
+        if (response.tipo === 'ADMIN') {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/']);
+        }
+      },
+      error: () => {
+        this.erro = 'Email ou senha inválidos.';
+        this.loading = false;
       }
-
-    } else {
-      alert('E-mail ou senha incorretos! Tente novamente.');
-    }
+    });
   }
 }

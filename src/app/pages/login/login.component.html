@@ -44,7 +44,8 @@
             </div>
           </div>
 
-          <button type="submit" class="botao-primario-grande">ENTRAR</button>
+          <p *ngIf="erro" style="color:#e74c3c;font-size:0.85rem;margin-bottom:0.5rem;">{{ erro }}</p>
+          <button type="submit" class="botao-primario-grande" [disabled]="loading">{{ loading ? 'Entrando...' : 'ENTRAR' }}</button>
         </form>
 
         <div class="rodape-cartao">

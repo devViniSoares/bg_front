@@ -1,8 +1,9 @@
-import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
-import { isPlatformBrowser, CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CartService } from '../../core/services/cart.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -18,7 +19,7 @@ export class HeaderComponent implements OnInit {
   constructor(
     private router: Router,
     private servicoCarrinho: CartService,
-    @Inject(PLATFORM_ID) private platformId: Object,
+    private authService: AuthService,
   ) {}
 
   ngOnInit() {
@@ -28,26 +29,15 @@ export class HeaderComponent implements OnInit {
   }
 
   estaLogado(): boolean {
-    if (isPlatformBrowser(this.platformId)) {
-      return localStorage.getItem('usuarioSessao') !== null;
-    }
-    return false;
-  }
-
-  logout() {
-    if (isPlatformBrowser(this.platformId)) {
-      const confirmacao = confirm("Já vai, mestre? Quer mesmo sair da conta?");
-      if (confirmacao) {
-        localStorage.removeItem('usuarioSessao');
-        this.router.navigate(['/login']);
-      }
-    }
+    return this.authService.isLoggedIn();
   }
 
   handleUserIconClick(event: Event) {
     event.preventDefault();
     if (this.estaLogado()) {
-      this.logout();
+      if (confirm('Deseja sair da sua conta?')) {
+        this.authService.logout();
+      }
     } else {
       this.router.navigate(['/login']);
     }
