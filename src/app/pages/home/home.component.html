@@ -45,10 +45,10 @@
         <div class="cartao-produto" *ngFor="let produto of produtosEmDestaque">
           <a [routerLink]="['/produto', produto.id]" class="link-produto">
             <div class="caixa-imagem-produto">
-              <img [src]="produto.img" [alt]="produto.name" />
+              <img [src]="produto.imagemUrl" [alt]="produto.nome" />
             </div>
-            <h3 class="titulo-produto">{{ produto.name }}</h3>
-            <p class="preco">R$ {{ produto.price | number: "1.2-2" }}</p>
+            <h3 class="titulo-produto">{{ produto.nome }}</h3>
+            <p class="preco">R$ {{ produto.preco | number: "1.2-2" }}</p>
           </a>
           <button
             class="botao-primario espaco-topo"

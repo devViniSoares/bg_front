@@ -3,43 +3,122 @@
         <h1 class="titulo-secao">Finalizar Pedido</h1>
 
         <form class="layout-pagamento" #formPagamento="ngForm" (ngSubmit)="finalizarPedido(formPagamento)">
-            
-            <section class="escolha-pagamento">
+
+            <!-- ── Coluna esquerda: Endereço + Cartão ────────────────────────── -->
+            <div class="coluna-formulario">
+
+                <!-- Endereço de Entrega -->
                 <div class="cartao-metodo">
                     <h2 class="subtitulo-pagamento">
-                        <i class="fas fa-credit-card"></i> Pagamento via Cartão de Crédito
+                        <i class="fas fa-map-marker-alt"></i> Endereço de Entrega
                     </h2>
-                    
-                    <div class="detalhes-cartao">
-                        <div class="campo-pagamento">
-                            <label>Nome Impresso no Cartão</label>
-                            <input type="text" name="nome" [(ngModel)]="dadosCartao.nome" required #nome="ngModel" placeholder="Ex: JUNIOR F SILVA">
-                            <span class="mensagem-erro" *ngIf="nome.invalid && nome.touched">O nome é obrigatório.</span>
-                        </div>
 
+                    <!-- Rua + Número -->
+                    <div class="grade-campos grade-2-1">
                         <div class="campo-pagamento">
-                            <label>Número do Cartão</label>
-                            <input type="text" name="numero" [(ngModel)]="dadosCartao.numero" required minlength="16" maxlength="16" pattern="^[0-9]*$" #numero="ngModel" placeholder="0000 0000 0000 0000">
-                            <span class="mensagem-erro" *ngIf="numero.invalid && numero.touched">Insira um número válido de 16 dígitos.</span>
+                            <label>Rua / Logradouro <span class="obrigatorio">*</span></label>
+                            <input type="text" name="rua" [(ngModel)]="endereco.rua"
+                                required #rua="ngModel" placeholder="Ex: Rua das Flores">
+                            <span class="mensagem-erro" *ngIf="rua.invalid && rua.touched">Rua obrigatória.</span>
                         </div>
-                        
-                        <div class="grade-campos">
-                            <div class="campo-pagamento">
-                                <label>Validade</label>
-                                <input type="text" name="validade" [(ngModel)]="dadosCartao.validade" required pattern="^(0[1-9]|1[0-2])\/?([0-9]{2})$" #validade="ngModel" placeholder="MM/AA">
-                                <span class="mensagem-erro" *ngIf="validade.invalid && validade.touched">Use o formato MM/AA.</span>
+                        <div class="campo-pagamento">
+                            <label>Número <span class="obrigatorio">*</span></label>
+                            <input type="text" name="numEndereco" [(ngModel)]="endereco.numero"
+                                required #numEndereco="ngModel" placeholder="Ex: 123">
+                            <span class="mensagem-erro" *ngIf="numEndereco.invalid && numEndereco.touched">Obrigatório.</span>
+                        </div>
+                    </div>
+
+                    <!-- Bairro + Cidade -->
+                    <div class="grade-campos grade-1-1">
+                        <div class="campo-pagamento">
+                            <label>Bairro <span class="obrigatorio">*</span></label>
+                            <input type="text" name="bairro" [(ngModel)]="endereco.bairro"
+                                required #bairro="ngModel" placeholder="Ex: Centro">
+                            <span class="mensagem-erro" *ngIf="bairro.invalid && bairro.touched">Bairro obrigatório.</span>
+                        </div>
+                        <div class="campo-pagamento">
+                            <label>Cidade <span class="obrigatorio">*</span></label>
+                            <input type="text" name="cidade" [(ngModel)]="endereco.cidade"
+                                required #cidade="ngModel" placeholder="Ex: São Paulo">
+                            <span class="mensagem-erro" *ngIf="cidade.invalid && cidade.touched">Cidade obrigatória.</span>
+                        </div>
+                    </div>
+
+                    <!-- Estado + CEP -->
+                    <div class="grade-campos grade-1-2">
+                        <div class="campo-pagamento">
+                            <label>Estado <span class="obrigatorio">*</span></label>
+                            <input type="text" name="estado" [(ngModel)]="endereco.estado"
+                                required maxlength="2" #estado="ngModel" placeholder="Ex: SP">
+                            <span class="mensagem-erro" *ngIf="estado.invalid && estado.touched">Estado obrigatório.</span>
+                        </div>
+                        <div class="campo-pagamento">
+                            <label>CEP <span class="obrigatorio">*</span></label>
+                            <div class="campo-cep-wrapper">
+                                <input type="text" name="cep" [(ngModel)]="endereco.cep"
+                                    required pattern="^[0-9]{5}-?[0-9]{3}$" #cep="ngModel"
+                                    placeholder="00000-000" maxlength="9"
+                                    (blur)="buscarEnderecoPorCep()"
+                                    (keyup.enter)="buscarEnderecoPorCep()">
+                                <button type="button" class="btn-buscar-cep"
+                                        (click)="buscarEnderecoPorCep()"
+                                        [disabled]="buscandoCep"
+                                        title="Buscar endereço">
+                                    <i class="fas"
+                                       [class.fa-search]="!buscandoCep"
+                                       [class.fa-spinner]="buscandoCep"
+                                       [class.fa-spin]="buscandoCep"></i>
+                                </button>
                             </div>
-                            
-                            <div class="campo-pagamento">
-                                <label>CVV</label>
-                                <input type="password" name="cvv" [(ngModel)]="dadosCartao.cvv" required minlength="3" maxlength="4" pattern="^[0-9]*$" #cvv="ngModel" placeholder="***">
-                                <span class="mensagem-erro" *ngIf="cvv.invalid && cvv.touched">CVV inválido.</span>
-                            </div>
+                            <span class="mensagem-erro" *ngIf="cep.invalid && cep.touched">CEP inválido.</span>
+                            <span class="mensagem-erro" *ngIf="erroCep">{{ erroCep }}</span>
                         </div>
                     </div>
                 </div>
-            </section>
 
+                <!-- Dados do Cartão -->
+                <div class="cartao-metodo">
+                    <h2 class="subtitulo-pagamento">
+                        <i class="fas fa-credit-card"></i> Dados do Cartão de Crédito
+                    </h2>
+
+                    <div class="campo-pagamento">
+                        <label>Nome Impresso no Cartão <span class="obrigatorio">*</span></label>
+                        <input type="text" name="nomeCartao" [(ngModel)]="dadosCartao.nome"
+                            required #nomeCartao="ngModel" placeholder="Ex: JUNIOR F SILVA">
+                        <span class="mensagem-erro" *ngIf="nomeCartao.invalid && nomeCartao.touched">O nome é obrigatório.</span>
+                    </div>
+
+                    <div class="campo-pagamento">
+                        <label>Número do Cartão <span class="obrigatorio">*</span></label>
+                        <input type="text" name="numero" [(ngModel)]="dadosCartao.numero"
+                            required minlength="16" maxlength="16" pattern="^[0-9]*$"
+                            #numero="ngModel" placeholder="0000 0000 0000 0000">
+                        <span class="mensagem-erro" *ngIf="numero.invalid && numero.touched">Insira um número válido de 16 dígitos.</span>
+                    </div>
+
+                    <div class="grade-campos grade-1-1">
+                        <div class="campo-pagamento">
+                            <label>Validade <span class="obrigatorio">*</span></label>
+                            <input type="text" name="validade" [(ngModel)]="dadosCartao.validade"
+                                required pattern="^(0[1-9]|1[0-2])\/?([0-9]{2})$"
+                                #validade="ngModel" placeholder="MM/AA">
+                            <span class="mensagem-erro" *ngIf="validade.invalid && validade.touched">Use o formato MM/AA.</span>
+                        </div>
+                        <div class="campo-pagamento">
+                            <label>CVV <span class="obrigatorio">*</span></label>
+                            <input type="password" name="cvv" [(ngModel)]="dadosCartao.cvv"
+                                required minlength="3" maxlength="4" pattern="^[0-9]*$"
+                                #cvv="ngModel" placeholder="***">
+                            <span class="mensagem-erro" *ngIf="cvv.invalid && cvv.touched">CVV inválido.</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /coluna-formulario -->
+
+            <!-- ── Coluna direita: Resumo ──────────────────────────────────── -->
             <aside class="resumo-conclusao">
                 <h3 class="titulo-resumo">Resumo Final</h3>
                 <div class="linha-valor">
@@ -48,7 +127,7 @@
                 </div>
                 <div class="linha-valor">
                     <span>Frete:</span>
-                    <span>R$ {{ frete | number:'1.2-2' }}</span>
+                    <span>{{ frete > 0 ? 'R$ ' + (frete | number:'1.2-2') : 'A calcular' }}</span>
                 </div>
                 <hr class="divisor">
                 <div class="linha-total">
@@ -56,10 +135,16 @@
                     <span class="preco-final">R$ {{ (totalProdutos + frete) | number:'1.2-2' }}</span>
                 </div>
 
-                <button type="submit" class="botao-finalizar-tudo">
-                    CONCLUIR PEDIDO <i class="fas fa-check-circle"></i>
+                <button type="submit" class="botao-finalizar-tudo" [disabled]="processando">
+                    <span *ngIf="!processando">CONCLUIR PEDIDO <i class="fas fa-check-circle"></i></span>
+                    <span *ngIf="processando"><i class="fas fa-spinner fa-spin"></i> Processando...</span>
                 </button>
+
+                <p class="aviso-frete" *ngIf="frete === 0">
+                    <i class="fas fa-info-circle"></i> Informe o CEP para calcular o frete.
+                </p>
             </aside>
+
         </form>
     </div>
 </main>

@@ -1,3 +1,5 @@
+/* ── Página ─────────────────────────────────────────────────────────────── */
+
 .pagina-pagamento {
     background-color: #E0E0E0;
     padding: 3rem 0;
@@ -9,11 +11,14 @@
     border-bottom: 2px solid var(--color-primary-red);
     display: inline-block;
     margin-bottom: 2rem;
+    color: #333;
 }
+
+/* ── Layout principal: form esquerda | resumo direita ────────────────────── */
 
 .layout-pagamento {
     display: grid;
-    grid-template-columns: 1fr 350px;
+    grid-template-columns: 1fr 340px;
     gap: 2rem;
     align-items: start;
 }
@@ -24,43 +29,82 @@
     }
 }
 
+/* Coluna esquerda: agrupa seções de endereço e cartão */
+.coluna-formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* ── Cards de seção ──────────────────────────────────────────────────────── */
+
 .cartao-metodo {
-    background: white;
+    background: #fff;
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.06);
 }
 
 .subtitulo-pagamento {
     color: #333;
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-    font-size: 1.25rem;
+    margin: 0 0 1.5rem 0;
+    font-size: 1.2rem;
     display: flex;
     align-items: center;
     gap: 10px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.75rem;
 }
+
+/* ── Grades de campos ────────────────────────────────────────────────────── */
+
+.grade-campos {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 0;
+}
+
+/* Proporções pré-definidas */
+.grade-2-1 { grid-template-columns: 2fr 1fr; }
+.grade-1-1 { grid-template-columns: 1fr 1fr; }
+.grade-1-2 { grid-template-columns: 1fr 2fr; }
+
+@media (max-width: 600px) {
+    .grade-2-1,
+    .grade-1-1,
+    .grade-1-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Campos individuais ──────────────────────────────────────────────────── */
 
 .campo-pagamento {
     display: flex;
     flex-direction: column;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
 }
 
 .campo-pagamento label {
-    font-weight: bold;
-    margin-bottom: 8px;
+    font-weight: 600;
+    margin-bottom: 6px;
     color: #555;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
+}
+
+.obrigatorio {
+    color: var(--color-primary-red);
 }
 
 .campo-pagamento input {
-    padding: 12px;
+    padding: 11px 12px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 1rem;
-    transition: all 0.3s;
+    transition: border-color 0.2s;
     outline: none;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .campo-pagamento input:focus {
@@ -78,30 +122,59 @@
 
 .mensagem-erro {
     color: var(--color-primary-red);
-    font-size: 0.8rem;
-    margin-top: 5px;
-    font-weight: bold;
+    font-size: 0.78rem;
+    margin-top: 4px;
+    font-weight: 600;
 }
 
-.grade-campos {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+/* ── Campo CEP com botão ─────────────────────────────────────────────────── */
+
+.campo-cep-wrapper {
+    display: flex;
 }
+
+.campo-cep-wrapper input {
+    flex: 1;
+    border-radius: 4px 0 0 4px !important;
+}
+
+.btn-buscar-cep {
+    background: #333;
+    color: #fff;
+    border: none;
+    padding: 0 14px;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 0.95rem;
+}
+
+.btn-buscar-cep:hover:not(:disabled) {
+    background: var(--color-primary-red);
+}
+
+.btn-buscar-cep:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* ── Painel de resumo (coluna direita) ───────────────────────────────────── */
 
 .resumo-conclusao {
-    background: white;
+    background: #fff;
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.06);
+    position: sticky;
+    top: 1.5rem;
 }
 
 .titulo-resumo {
     font-family: 'Oswald', sans-serif;
     color: var(--color-primary-red);
-    margin-top: 0;
+    margin: 0 0 1rem 0;
     border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
+    padding-bottom: 0.75rem;
 }
 
 .linha-valor {
@@ -109,13 +182,14 @@
     justify-content: space-between;
     margin: 10px 0;
     color: #555;
+    font-size: 0.95rem;
 }
 
 .divisor {
-    border: 0;
+    border: none;
     height: 1px;
     background: #eee;
-    margin: 15px 0;
+    margin: 1rem 0;
 }
 
 .linha-total {
@@ -124,26 +198,46 @@
     align-items: center;
     margin-bottom: 1.5rem;
     font-weight: bold;
+    font-size: 1.05rem;
 }
 
 .preco-final {
     font-size: 1.5rem;
     color: var(--color-primary-red);
+    font-weight: bold;
 }
 
 .botao-finalizar-tudo {
     width: 100%;
     background: var(--color-primary-red);
-    color: white;
+    color: #fff;
     border: none;
     padding: 1rem;
     font-weight: bold;
     border-radius: 4px;
     cursor: pointer;
-    transition: 0.3s;
-    font-size: 1.1rem;
+    transition: background 0.2s;
+    font-size: 1.05rem;
+    letter-spacing: 0.5px;
 }
 
-.botao-finalizar-tudo:hover {
+.botao-finalizar-tudo:hover:not(:disabled) {
     background: #c0392b;
+}
+
+.botao-finalizar-tudo:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.aviso-frete {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    color: #888;
+    text-align: center;
+}
+
+.aviso-frete i {
+    color: #f39c12;
+    margin-right: 4px;
 }
