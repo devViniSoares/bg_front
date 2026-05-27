@@ -1,60 +1,72 @@
-<main class="pagina-detalhes" *ngIf="produto">
+<!-- Loading -->
+<div class="aviso-carrinho-vazio" *ngIf="carregando">
+  <i class="fas fa-spinner fa-spin"></i>
+  <p>Carregando produto...</p>
+</div>
+
+<main class="pagina-detalhes" *ngIf="!carregando && produto">
   <div class="recipiente">
     <nav class="trilha-navegacao">
       <a routerLink="/">Home</a> > <a routerLink="/produtos">Produtos</a> >
-      <span class="trilha-ativa">{{ produto.name }}</span>
+      <span class="trilha-ativa">{{ produto.nome }}</span>
     </nav>
 
     <div class="layout-info-produto">
       <div class="area-imagem-produto">
-        <img [src]="produto.img" [alt]="produto.name" />
+        <img [src]="produto.imagemUrl" [alt]="produto.nome" />
       </div>
 
       <div class="area-dados-produto">
-        <h1 class="titulo-produto-destaque">{{ produto.name }}</h1>
+        <h1 class="titulo-produto-destaque">{{ produto.nome }}</h1>
 
         <p class="texto-referencia">
-          Ref: <span>{{ produto.id }}</span> | Marca:
-          <strong>{{ produto.brand }}</strong>
+          Ref: <span>#{{ produto.id }}</span> | Marca:
+          <strong>{{ produto.marca }}</strong>
         </p>
 
         <div class="estrelas-avaliacao">
-          <i class="fas fa-star"></i><i class="fas fa-star"></i
-          ><i class="fas fa-star"></i><i class="fas fa-star"></i
-          ><i class="fas fa-star-half-alt"></i>
+          <i class="fas fa-star"></i><i class="fas fa-star"></i>
+          <i class="fas fa-star"></i><i class="fas fa-star"></i>
+          <i class="fas fa-star-half-alt"></i>
           <span>(120 Avaliações)</span>
         </div>
 
         <div class="area-preco">
           <p class="preco-destaque">
-            <span>R$</span> {{ produto.price | number: "1.2-2" }}
+            <span>R$</span> {{ produto.preco | number: "1.2-2" }}
           </p>
           <p class="texto-parcelamento">
             Em até
-            <strong
-              >12x de R$ {{ produto.price / 12 | number: "1.2-2" }}</strong
-            >
+            <strong>12x de R$ {{ produto.preco / 12 | number: "1.2-2" }}</strong>
             sem juros.
           </p>
         </div>
 
         <div class="controle-quantidade">
-          <label for="quantidade">Quantidade:</label>
+          <label for="quantidade">
+            Quantidade:
+            <span style="font-size:0.8rem; color:#888; font-weight:400; margin-left:6px;">
+              ({{ produto.estoque }} disponíve{{ produto.estoque === 1 ? 'l' : 'is' }})
+            </span>
+          </label>
           <input
             type="number"
             id="quantidade"
             [(ngModel)]="quantidade"
             min="1"
-            max="10"
+            [max]="produto.estoque"
           />
         </div>
 
         <div class="grupo-botoes-compra">
-          <button class="botao-escuro-grande" (click)="adicionarAoCarrinho()">
-            <i class="fas fa-shopping-cart"></i> ADICIONAR
+          <button class="botao-escuro-grande" (click)="adicionarAoCarrinho()"
+                  [disabled]="produto.estoque === 0">
+            <i class="fas fa-shopping-cart"></i>
+            {{ produto.estoque === 0 ? 'SEM ESTOQUE' : 'ADICIONAR' }}
           </button>
-          <button class="botao-primario-grande" (click)="comprarAgora()">
-            COMPRAR AGORA
+          <button class="botao-primario-grande" (click)="comprarAgora()"
+                  [disabled]="produto.estoque === 0">
+            {{ produto.estoque === 0 ? 'INDISPONÍVEL' : 'COMPRAR AGORA' }}
           </button>
         </div>
 
@@ -65,8 +77,7 @@
             <button>Calcular</button>
           </div>
           <p class="sucesso-frete">
-            <i class="fas fa-check-circle"></i> Entrega estimada: 5-7 dias
-            úteis.
+            <i class="fas fa-check-circle"></i> Entrega estimada: 5-7 dias úteis.
           </p>
         </div>
       </div>
@@ -94,22 +105,30 @@
 
       <div class="conteudo-aba">
         <div *ngIf="abaAtiva === 'descricao'">
-          <p>{{ produto.description }}</p>
+          <p>{{ produto.descricao }}</p>
         </div>
 
         <div *ngIf="abaAtiva === 'especificacoes'">
           <table class="tabela-especificacoes">
             <tbody>
-              <tr *ngFor="let spec of produto.specs">
-                <th>{{ spec.label }}</th>
-                <td>{{ spec.value }}</td>
+              <tr>
+                <th>Categoria</th>
+                <td>{{ produto.categoria }}</td>
+              </tr>
+              <tr>
+                <th>Marca</th>
+                <td>{{ produto.marca }}</td>
+              </tr>
+              <tr>
+                <th>Modelo Compatível</th>
+                <td>{{ produto.modelo }}</td>
+              </tr>
+              <tr>
+                <th>Estoque</th>
+                <td>{{ produto.estoque }} unidades disponíveis</td>
               </tr>
             </tbody>
           </table>
-        </div>
-
-        <div *ngIf="abaAtiva === 'compatibilidade'">
-          <p>{{ produto.compatibility }}</p>
         </div>
       </div>
     </section>

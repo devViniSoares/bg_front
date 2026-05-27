@@ -3,9 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
+import { CartService } from './cart.service';
 
 export interface LoginResponse {
   token: string;
+  refreshToken: string;
   tipo: string;
   id: number;
   nome: string;
@@ -19,6 +21,7 @@ export interface CadastroRequest {
 
 const API_URL = 'http://localhost:8080';
 const TOKEN_KEY = 'token';
+const REFRESH_TOKEN_KEY = 'refreshToken';
 const USER_KEY = 'usuarioSessao';
 
 @Injectable({
@@ -28,7 +31,8 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private cartService: CartService,
   ) {}
 
   login(email: string, senha: string): Observable<LoginResponse> {
@@ -36,6 +40,9 @@ export class AuthService {
       tap(response => {
         if (isPlatformBrowser(this.platformId)) {
           localStorage.setItem(TOKEN_KEY, response.token);
+          if (response.refreshToken) {
+            localStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken);
+          }
           localStorage.setItem(USER_KEY, JSON.stringify({
             id: response.id,
             nome: response.nome,
@@ -53,9 +60,12 @@ export class AuthService {
   logout(): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(REFRESH_TOKEN_KEY);
       localStorage.removeItem(USER_KEY);
       localStorage.removeItem('cart');
+      localStorage.removeItem('carrinho_bigode');
     }
+    this.cartService.limparCarrinho();
     this.router.navigate(['/']);
   }
 
@@ -81,11 +91,33 @@ export class AuthService {
     return null;
   }
 
+  getRefreshToken(): string | null {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem(REFRESH_TOKEN_KEY);
+    }
+    return null;
+  }
+
+  /** Salva novo access token após refresh. */
+  atualizarToken(token: string): void {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem(TOKEN_KEY, token);
+    }
+  }
+
   getUserName(): string {
     if (isPlatformBrowser(this.platformId)) {
       const raw = localStorage.getItem(USER_KEY);
       if (raw) return JSON.parse(raw).nome ?? 'Cliente';
     }
     return 'Cliente';
+  }
+
+  getUserId(): number | null {
+    if (isPlatformBrowser(this.platformId)) {
+      const raw = localStorage.getItem(USER_KEY);
+      if (raw) return JSON.parse(raw).id ?? null;
+    }
+    return null;
   }
 }

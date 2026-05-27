@@ -1,7 +1,7 @@
-import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
-import { isPlatformBrowser, CommonModule } from '@angular/common'; 
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { ProductService } from '../../core/services/product.service';
+import { ProdutoService, Produto, ProdutosPaginados } from '../../core/services/produto.service';
 import { CartService } from '../../core/services/cart.service';
 
 @Component({
@@ -9,29 +9,37 @@ import { CartService } from '../../core/services/cart.service';
   standalone: true,
   imports: [RouterLink, CommonModule],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css'] 
+  styleUrls: ['./home.component.css'],
 })
 export class HomeComponent implements OnInit {
-  produtosEmDestaque: any[] = [];
+  produtosEmDestaque: Produto[] = [];
 
   constructor(
-    private servicoProduto: ProductService,
+    private produtoService: ProdutoService,
     private servicoCarrinho: CartService,
-    @Inject(PLATFORM_ID) private platformId: Object 
   ) {}
 
   ngOnInit() {
-    this.produtosEmDestaque = [
-      this.servicoProduto.getProductById('T300-HP-01'),
-      this.servicoProduto.getProductById('PA-CE-04'),
-      this.servicoProduto.getProductById('AM-ES-ADJ')
-    ];
+    // Busca mais itens para garantir 3 com estoque após filtrar os zerados
+    this.produtoService.getProdutos({ page: 0, size: 10 }).subscribe({
+      next: (resposta) => {
+        let lista: Produto[] = [];
+
+        if (resposta && (resposta as ProdutosPaginados).content) {
+          lista = (resposta as ProdutosPaginados).content;
+        } else if (Array.isArray(resposta)) {
+          lista = resposta as Produto[];
+        }
+
+        this.produtosEmDestaque = lista.filter((p) => p.estoque > 0).slice(0, 3);
+      },
+      error: (err) => console.error('Erro ao carregar produtos em destaque', err),
+    });
   }
 
-  adicionarAoCarrinho(event: Event, produto: any) { 
+  adicionarAoCarrinho(event: Event, produto: Produto) {
     event.preventDefault();
     event.stopPropagation();
-    
     this.servicoCarrinho.adicionarAoCarrinho(produto, 1);
   }
 }

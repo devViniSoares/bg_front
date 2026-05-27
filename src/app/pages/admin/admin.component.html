@@ -2,16 +2,16 @@
   <aside class="barra-lateral">
     <div class="perfil-admin">
       <i class="fas fa-user-circle icone-perfil"></i>
-      <span>UsuarioADM</span>
+      <span>{{ nomeAdmin }}</span>
     </div>
 
     <nav class="menu-admin">
       <button
         class="item-menu"
-        [class.ativo]="menuAtivo === 'financas'"
-        (click)="menuAtivo = 'financas'"
+        [class.ativo]="menuAtivo === 'usuarios'"
+        (click)="trocarMenu('usuarios')"
       >
-        <i class="fas fa-chart-bar"></i> Finanças
+        <i class="fas fa-users"></i> Usuários
       </button>
       <button
         class="item-menu"
@@ -37,33 +37,63 @@
   </aside>
 
   <main class="conteudo-principal">
-    <section class="tela-admin" *ngIf="menuAtivo === 'financas'">
-      <h1 class="titulo-admin">FINANÇAS</h1>
+    <!-- ── Gestão de Usuários ───────────────────────────────────────────── -->
+    <section class="tela-admin" *ngIf="menuAtivo === 'usuarios'">
+      <h1 class="titulo-admin">USUÁRIOS</h1>
 
-      <div class="grade-cards-financeiros">
-        <div class="card-financeiro card-lucro">
-          <div class="info-card">
-            <h2>LUCROS</h2>
-            <p>$364.32M</p>
-          </div>
-          <i class="fas fa-wallet"></i>
-        </div>
+      <!-- Loading -->
+      <div *ngIf="carregandoUsuarios" style="text-align:center; padding:2rem;">
+        <i class="fas fa-spinner fa-spin"></i> Carregando usuários...
+      </div>
 
-        <div class="card-financeiro card-ganhos">
-          <div class="info-card">
-            <h2>GANHOS</h2>
-            <p>+$779.77M</p>
-          </div>
-          <i class="fas fa-arrow-up"></i>
-        </div>
+      <!-- Sem usuários -->
+      <div *ngIf="!carregandoUsuarios && usuarios.length === 0"
+           style="text-align:center; padding:2rem; color:#888;">
+        Nenhum usuário encontrado.
+      </div>
 
-        <div class="card-financeiro card-despesas">
-          <div class="info-card">
-            <h2>DESPESAS</h2>
-            <p>-$415.45M</p>
-          </div>
-          <i class="fas fa-arrow-down"></i>
-        </div>
+      <div class="tabela-container" *ngIf="!carregandoUsuarios && usuarios.length > 0">
+        <table class="tabela-admin">
+          <thead>
+            <tr>
+              <th>#ID</th>
+              <th>Nome</th>
+              <th>E-mail</th>
+              <th>Tipo</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let usuario of usuarios">
+              <td>{{ usuario.id }}</td>
+              <td>{{ usuario.nome }}</td>
+              <td>{{ usuario.email }}</td>
+              <td>
+                <span class="badge-tipo" [class.badge-admin]="usuario.tipo === 'ADMIN'"
+                      [class.badge-cliente]="usuario.tipo === 'CLIENTE'">
+                  {{ usuario.tipo }}
+                </span>
+              </td>
+              <td>
+                <span *ngIf="usuario.id === idUsuarioLogado" class="label-voce">
+                  <i class="fas fa-lock"></i> Você
+                </span>
+                <button *ngIf="usuario.id !== idUsuarioLogado"
+                        class="btn-alterar-tipo"
+                        [class.btn-promover]="usuario.tipo === 'CLIENTE'"
+                        [class.btn-rebaixar]="usuario.tipo === 'ADMIN'"
+                        [disabled]="alterandoTipo.has(usuario.id)"
+                        (click)="alterarTipoUsuario(usuario)">
+                  <i class="fas" [class.fa-spinner]="alterandoTipo.has(usuario.id)"
+                                 [class.fa-spin]="alterandoTipo.has(usuario.id)"
+                                 [class.fa-user-shield]="!alterandoTipo.has(usuario.id) && usuario.tipo === 'CLIENTE'"
+                                 [class.fa-user]="!alterandoTipo.has(usuario.id) && usuario.tipo === 'ADMIN'"></i>
+                  {{ usuario.tipo === 'CLIENTE' ? 'Tornar Admin' : 'Tornar Cliente' }}
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
     <section class="tela-admin" *ngIf="menuAtivo === 'criar'">
@@ -117,6 +147,16 @@
                 name="fabricante"
                 [(ngModel)]="produtoForm.fabricante"
                 class="input-cinza"
+              />
+            </div>
+            <div class="campo-linha">
+              <label>Modelo:</label>
+              <input
+                type="text"
+                name="modelo"
+                [(ngModel)]="produtoForm.modelo"
+                class="input-cinza"
+                placeholder="Ex: Civic, Gol, Uno..."
               />
             </div>
             <div class="campo-linha">
@@ -188,36 +228,58 @@
         <div class="abas-relatorio">
           <button
             [class.ativo]="subAbaRelatorio === 'vendas'"
-            (click)="subAbaRelatorio = 'vendas'"
+            (click)="trocarSubAba('vendas')"
           >
             Vendas Concluídas
           </button>
           <button
             [class.ativo]="subAbaRelatorio === 'estoque'"
-            (click)="subAbaRelatorio = 'estoque'"
+            (click)="trocarSubAba('estoque')"
           >
             Estoque
           </button>
         </div>
       </div>
       <div class="tabela-container" *ngIf="subAbaRelatorio === 'vendas'">
-        <table class="tabela-admin">
+
+        <!-- Loading -->
+        <div *ngIf="carregandoPedidos" style="text-align:center; padding: 2rem;">
+          <i class="fas fa-spinner fa-spin"></i> Carregando pedidos...
+        </div>
+
+        <!-- Sem resultados -->
+        <div *ngIf="!carregandoPedidos && pedidosConcluidos.length === 0"
+             style="text-align:center; padding: 2rem; color: #888;">
+          Nenhuma venda concluída encontrada.
+        </div>
+
+        <table class="tabela-admin" *ngIf="!carregandoPedidos && pedidosConcluidos.length > 0">
           <thead>
             <tr>
-              <th>nome</th>
-              <th>modelo</th>
-              <th>categoria</th>
-              <th>preço</th>
-              <th>status</th>
+              <th>#Pedido</th>
+              <th>Cliente</th>
+              <th>E-mail</th>
+              <th>Total</th>
+              <th>Itens</th>
+              <th>Data</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Vinicius Soares Inocencio</td>
-              <td>Pastilha de Freio Alta performace</td>
-              <td>Freio</td>
-              <td>R$ 450,90</td>
-              <td class="status-entregue"><strong>Entregue</strong></td>
+            <tr *ngFor="let pedido of pedidosConcluidos">
+              <td>{{ pedido.id }}</td>
+              <td>{{ pedido.usuario?.nome ?? '—' }}</td>
+              <td>{{ pedido.usuario?.email ?? '—' }}</td>
+              <td>{{ pedido.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+              <td>{{ pedido.itens?.length ?? 0 }}</td>
+              <td>{{ pedido.createdAt | date:'dd/MM/yyyy' }}</td>
+              <td>
+                <span class="badge-tipo"
+                      [class.badge-admin]="pedido.status === 'ENTREGUE'"
+                      [class.badge-cliente]="pedido.status === 'CONFIRMADO'">
+                  {{ pedido.status === 'ENTREGUE' ? 'Entregue' : 'Confirmado' }}
+                </span>
+              </td>
             </tr>
           </tbody>
         </table>

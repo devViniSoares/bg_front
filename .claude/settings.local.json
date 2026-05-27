@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npm run *)",
       "Bash(wait)",
-      "Bash(npx ng *)"
+      "Bash(npx ng *)",
+      "Bash(npx tsc *)"
     ]
   }
 }

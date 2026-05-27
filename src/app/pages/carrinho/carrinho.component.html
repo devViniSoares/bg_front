@@ -35,8 +35,15 @@
                         </div>
 
                         <div class="controle-quantidade">
-                            <input type="number" [value]="item.qty" min="1"
-                                (change)="alterarQuantidade(item.id, $event)">
+                            <button class="btn-qty"
+                                    (click)="decrementarQtd(item.id)"
+                                    [disabled]="item.qty <= 1">−</button>
+                            <span class="qty-display">{{ item.qty }}</span>
+                            <button class="btn-qty"
+                                    (click)="incrementarQtd(item)"
+                                    [disabled]="item.estoque !== undefined && item.qty >= item.estoque"
+                                    [title]="item.estoque !== undefined && item.qty >= item.estoque ? 'Estoque máximo atingido' : ''">+</button>
+                            <span class="tag-max" *ngIf="item.estoque !== undefined && item.qty >= item.estoque">MÁX.</span>
                         </div>
 
                         <div class="valor-unitario">
@@ -69,12 +76,29 @@
                 <div class="bloco-frete">
                     <label>Calcular Frete</label>
                     <div class="campo-busca-frete">
-                        <input type="text" placeholder="00000-000">
-                        <button><i class="fas fa-truck"></i></button>
+                        <input type="text" [(ngModel)]="cepInput" placeholder="00000-000"
+                               maxlength="9" (keyup.enter)="calcularFrete()">
+                        <button (click)="calcularFrete()" [disabled]="buscandoCep">
+                            <i class="fas"
+                               [class.fa-truck]="!buscandoCep"
+                               [class.fa-spinner]="buscandoCep"
+                               [class.fa-spin]="buscandoCep"></i>
+                        </button>
                     </div>
-                    <div class="resultado-frete">
-                        <span>Frete estimado:</span>
-                        <span>R$ {{ frete | number:'1.2-2' }}</span>
+
+                    <p class="erro-cep" *ngIf="erroCep">
+                        <i class="fas fa-exclamation-circle"></i> {{ erroCep }}
+                    </p>
+
+                    <div class="resultado-frete" *ngIf="enderecoFrete">
+                        <div class="endereco-encontrado">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>{{ enderecoFrete.bairro ? enderecoFrete.bairro + ' — ' : '' }}{{ enderecoFrete.localidade }}/{{ enderecoFrete.uf }}</span>
+                        </div>
+                        <div class="linha-frete-valor">
+                            <span>Frete estimado:</span>
+                            <strong>R$ {{ frete | number:'1.2-2' }}</strong>
+                        </div>
                     </div>
                 </div>
 

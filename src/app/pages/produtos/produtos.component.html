@@ -11,16 +11,15 @@
         <div class="grupo-filtro">
           <h3 class="subtitulo-filtro">Categoria</h3>
           <div class="lista-opcoes">
-            <label class="item-check" *ngFor="
-                let cat of [
-                  'Motor',
-                  'Freio',
-                  'Suspensão',
-                  'Iluminação'
-                ]
-              ">
-              <input type="checkbox" [checked]="categoriasSelecionadas[cat]"
-                (change)="alternarCategoria(cat, $event)" />
+            <label
+              class="item-check"
+              *ngFor="let cat of ['Motor', 'Freio', 'Suspensão', 'Iluminação']"
+            >
+              <input
+                type="checkbox"
+                [checked]="categoriasSelecionadas[cat]"
+                (change)="alternarCategoria(cat, $event)"
+              />
               {{ cat }}
             </label>
           </div>
@@ -28,43 +27,100 @@
 
         <div class="grupo-filtro">
           <h3 class="subtitulo-filtro">Preço (R$)</h3>
-          <input type="range" min="0" max="5000" [value]="filtroPreco" (input)="atualizarPreco($event)"
-            class="barra-deslizante" />
-          <p class="texto-preco">
-            Até:
-            <span class="destaque-vermelho">R$ {{ filtroPreco | number: "1.2-2" }}</span>
-          </p>
+          <input
+            type="range"
+            min="0"
+            max="30000"
+            step="100"
+            [value]="filtroPreco"
+            (input)="atualizarPreco($event)"
+            class="barra-deslizante"
+          />
+          <div class="campo-preco-maximo">
+            <label class="label-preco-maximo">Valor máximo:</label>
+            <div class="input-preco-wrapper">
+              <span class="prefixo-real">R$</span>
+              <input
+                type="number"
+                min="0"
+                max="30000"
+                step="100"
+                [(ngModel)]="filtroPreco"
+                class="input-preco-maximo"
+                placeholder="30000"
+              />
+            </div>
+          </div>
         </div>
 
         <button class="botao-aplicar-filtros" (click)="aplicarFiltros()">
           Aplicar Filtros
         </button>
-
         <button class="botao-aplicar-filtros" (click)="limparTudo()">
           Limpar Tudo
         </button>
       </aside>
 
       <section class="area-listagem">
-        <div class="grade-produtos">
+
+        <!-- Loading -->
+        <div *ngIf="carregando" class="aviso-carrinho-vazio">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Carregando produtos...</p>
+        </div>
+
+        <!-- Sem resultados -->
+        <div *ngIf="!carregando && produtosExibidos.length === 0" class="aviso-carrinho-vazio">
+          <i class="fas fa-search"></i>
+          <p>Nenhum produto encontrado.</p>
+        </div>
+
+        <!-- Grade de produtos -->
+        <div class="grade-produtos" *ngIf="!carregando && produtosExibidos.length > 0">
           <div class="cartao-produto" *ngFor="let produto of produtosExibidos">
             <a [routerLink]="['/produto', produto.id]" class="link-produto">
               <div class="caixa-imagem-produto">
-                <img [src]="produto.img" [alt]="produto.name" />
+                <img [src]="produto.imagemUrl" [alt]="produto.nome" />
               </div>
               <div class="corpo-produto">
-                <h3 class="titulo-produto">{{ produto.name }}</h3>
-                <p class="preco-produto">
-                  R$ {{ produto.price | number: "1.2-2" }}
-                </p>
+                <h3 class="titulo-produto">{{ produto.nome }}</h3>
+                <p class="preco-produto">R$ {{ produto.preco | number: "1.2-2" }}</p>
               </div>
             </a>
-
             <button class="botao-comprar" (click)="adicionarAoCarrinho($event, produto)">
               Comprar
             </button>
           </div>
         </div>
+
+        <!-- Paginação -->
+        <div class="paginacao" *ngIf="totalPaginas > 1">
+          <button
+            class="botao-pagina"
+            [disabled]="paginaAtual === 0"
+            (click)="mudarPagina(paginaAtual - 1)"
+          >
+            <i class="fas fa-chevron-left"></i>
+          </button>
+
+          <button
+            class="botao-pagina"
+            *ngFor="let p of paginas"
+            [class.ativo]="p === paginaAtual"
+            (click)="mudarPagina(p)"
+          >
+            {{ p + 1 }}
+          </button>
+
+          <button
+            class="botao-pagina"
+            [disabled]="paginaAtual === totalPaginas - 1"
+            (click)="mudarPagina(paginaAtual + 1)"
+          >
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+
       </section>
     </div>
   </div>
