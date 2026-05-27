@@ -73,12 +73,34 @@
         <div class="caixa-frete">
           <h3><i class="fas fa-shipping-fast"></i> Calcule o Frete</h3>
           <div class="input-frete">
-            <input type="text" placeholder="Digite seu CEP" />
-            <button>Calcular</button>
+            <input
+              type="text"
+              placeholder="Digite seu CEP (ex: 01310-100)"
+              [(ngModel)]="cepInput"
+              (keyup.enter)="calcularFrete()"
+              [disabled]="buscandoCep"
+              maxlength="9"
+            />
+            <button (click)="calcularFrete()" [disabled]="buscandoCep">
+              <span *ngIf="!buscandoCep">Calcular</span>
+              <i *ngIf="buscandoCep" class="fas fa-spinner fa-spin"></i>
+            </button>
           </div>
-          <p class="sucesso-frete">
-            <i class="fas fa-check-circle"></i> Entrega estimada: 5-7 dias úteis.
+
+          <p class="erro-frete" *ngIf="erroCep">
+            <i class="fas fa-times-circle"></i> {{ erroCep }}
           </p>
+
+          <div class="resultado-frete" *ngIf="enderecoFrete && valorFrete !== null">
+            <p class="sucesso-frete">
+              <i class="fas fa-check-circle"></i>
+              Entrega para <strong>{{ enderecoFrete.localidade }}/{{ enderecoFrete.uf }}</strong>:
+              <strong>R$ {{ valorFrete | number: '1.2-2' }}</strong>
+            </p>
+            <p class="prazo-frete">
+              <i class="fas fa-calendar-alt"></i> Prazo estimado: {{ prazoEntrega }}
+            </p>
+          </div>
         </div>
       </div>
     </div>

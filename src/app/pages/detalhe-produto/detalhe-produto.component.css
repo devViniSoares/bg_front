@@ -185,6 +185,22 @@
   font-size: 0.85rem;
   margin: 0;
 }
+.erro-frete {
+  color: #dc3545;
+  font-size: 0.85rem;
+  margin: 0.5rem 0 0;
+}
+.resultado-frete {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.prazo-frete {
+  color: #6c757d;
+  font-size: 0.85rem;
+  margin: 0;
+}
 
 /* Seção de Abas */
 .secao-especificacoes {

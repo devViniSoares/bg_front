@@ -4,7 +4,9 @@
       "Bash(npm run *)",
       "Bash(wait)",
       "Bash(npx ng *)",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\ryan.ssantos9\\\\Documents\\\\bg_front\" -Force)",
+      "Bash(Select-Object Name, PSIsContainer)"
     ]
   }
 }
