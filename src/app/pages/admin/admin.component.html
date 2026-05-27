@@ -272,7 +272,7 @@
               <td>{{ pedido.usuario?.email ?? '—' }}</td>
               <td>{{ pedido.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
               <td>{{ pedido.itens?.length ?? 0 }}</td>
-              <td>{{ pedido.createdAt | date:'dd/MM/yyyy' }}</td>
+              <td>{{ pedido.criadoEm | date:'dd/MM/yyyy' }}</td>
               <td>
                 <span class="badge-tipo"
                       [class.badge-admin]="pedido.status === 'ENTREGUE'"

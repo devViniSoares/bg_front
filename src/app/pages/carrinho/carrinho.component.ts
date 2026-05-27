@@ -35,6 +35,7 @@ export class CarrinhoComponent implements OnInit {
       this.itensCarrinho = carrinho;
       this.calcularTotais();
     });
+    this.servicoCarrinho.carregarCarrinhoAPI();
   }
 
   calcularTotais() {

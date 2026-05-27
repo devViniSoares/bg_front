@@ -34,7 +34,7 @@ export interface Pedido {
   itens: ItemPedido[];
   usuario?: { id: number; nome: string; email: string };
   enderecoEntrega?: EnderecoEntrega;
-  createdAt?: string;
+  criadoEm?: string;
 }
 
 export interface PagamentoResponse {

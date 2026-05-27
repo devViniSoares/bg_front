@@ -179,6 +179,11 @@ export class CartService {
       const estoqueExtras = new Map<number, number>();
       if (estoque !== undefined) estoqueExtras.set(produtoId, estoque);
 
+      const jaNoCarrinho = this.itensNoCarrinho.value.some(p => p.id === produtoId);
+      if (jaNoCarrinho) {
+        this._notificacao.next(`Produto já está no carrinho. Adicionando mais unidades!`);
+      }
+
       this.http
         .post<CarrinhoAPI>(`${API_URL}/carrinho/item`, {
           produtoId,
@@ -189,7 +194,9 @@ export class CartService {
             if (carrinhoAtualizado?.itens) {
               this.atualizarEstadoDoCarrinho(carrinhoAtualizado, estoqueExtras);
             }
-            this._notificacao.next(`${nomeProduto} adicionado ao carrinho!`);
+            if (!jaNoCarrinho) {
+              this._notificacao.next(`${nomeProduto} adicionado ao carrinho!`);
+            }
           },
           error: (err: HttpErrorResponse) => {
             if (err.status === 400) {
@@ -219,6 +226,7 @@ export class CartService {
           }
           return;
         }
+        this._notificacao.next(`Produto já está no carrinho. Adicionando mais unidades!`);
         novosItens = itensAtuais.map((p) =>
           p.id === produto.id ? { ...p, qty: novaQtd } : p
         );
@@ -238,7 +246,9 @@ export class CartService {
 
       this.itensNoCarrinho.next(novosItens);
       this.salvarNoStorage(novosItens);
-      this._notificacao.next(`${nomeProduto} adicionado ao carrinho!`);
+      if (!itemExistente) {
+        this._notificacao.next(`${nomeProduto} adicionado ao carrinho!`);
+      }
     }
   }
 
@@ -270,14 +280,58 @@ export class CartService {
 
   atualizarQuantidade(produtoId: number, novaQuantidade: number) {
     const item = this.itensNoCarrinho.value.find(p => p.id === produtoId);
-    if (item?.estoque !== undefined && novaQuantidade > item.estoque) {
+    if (!item) return;
+
+    if (item.estoque !== undefined && novaQuantidade > item.estoque) {
       novaQuantidade = item.estoque;
     }
+
+    // Atualiza localmente de imediato para UI responsiva
     const novosItens = this.itensNoCarrinho.value.map((p) =>
       p.id === produtoId ? { ...p, qty: novaQuantidade } : p
     );
     this.itensNoCarrinho.next(novosItens);
     this.salvarNoStorage(novosItens);
+
+    // Sincroniza com o backend: calcula delta em relação ao estado atual
+    if (this.isLoggedIn() && item.carrinhoItemId) {
+      const delta = novaQuantidade - item.qty;
+      if (delta === 0) return;
+
+      if (delta > 0) {
+        this.http.post<CarrinhoAPI>(`${API_URL}/carrinho/item`, {
+          produtoId,
+          quantidade: delta,
+        }).subscribe({
+          next: (carrinhoAtualizado) => {
+            if (carrinhoAtualizado?.itens) {
+              this.atualizarEstadoDoCarrinho(carrinhoAtualizado);
+            }
+          },
+          error: (err) => console.error('[CartService] Erro ao atualizar quantidade:', err),
+        });
+      } else {
+        // delta < 0: remove e recria com a quantidade correta
+        this.http.delete<void>(`${API_URL}/carrinho/item/${item.carrinhoItemId}`).subscribe({
+          next: () => {
+            if (novaQuantidade > 0) {
+              this.http.post<CarrinhoAPI>(`${API_URL}/carrinho/item`, {
+                produtoId,
+                quantidade: novaQuantidade,
+              }).subscribe({
+                next: (carrinhoAtualizado) => {
+                  if (carrinhoAtualizado?.itens) {
+                    this.atualizarEstadoDoCarrinho(carrinhoAtualizado);
+                  }
+                },
+                error: (err) => console.error('[CartService] Erro ao recriar item:', err),
+              });
+            }
+          },
+          error: (err) => console.error('[CartService] Erro ao remover para atualizar quantidade:', err),
+        });
+      }
+    }
   }
 
   limparCarrinho() {
